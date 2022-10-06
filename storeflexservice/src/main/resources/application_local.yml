@@ -1,0 +1,22 @@
+debug: true
+server:
+  port:
+    8082
+  servlet:
+    context-path: /storeflexuserservice
+ 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/storeflex
+    username: postgres
+    password: admin
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          ddl-auto: update
+          show-sql: true
+          default_schema: storeflex_data
