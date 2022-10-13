@@ -1,6 +1,7 @@
 package com.storeflex.services.impl;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -12,8 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.WarehouseListBean;
+import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.dao.StoreFlexWarehouseDao;
 import com.storeflex.entities.Warehouse;
 import com.storeflex.exceptions.StoreFlexServiceException;
@@ -52,6 +55,21 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 	public WarehouseListBean getWarehouseList(String clientId, Pageable paging) throws StoreFlexServiceException {
 		log.info("Starting method getWarehouseList", this);
 		return dao.getWarehouseList(clientId,paging);
+	}
+
+	@Override
+	@Transactional
+	public Set<ClientWareHousePhtBean> getWarehousePics(String warehouseId) throws StoreFlexServiceException {
+		log.info("Starting method getWarehousePics", this);
+		return dao.getWarehousePics(warehouseId);
+	}
+
+	@Override
+	@Transactional
+	public WarehouseListBean getWarehouseSearch(WarehouseRequestBean build, int page, int size)
+			throws StoreFlexServiceException {
+		log.info("Starting method getWarehouseSearch", this);
+		return dao.getWarehouseSearch(build,page,size);
 	}
 
 }

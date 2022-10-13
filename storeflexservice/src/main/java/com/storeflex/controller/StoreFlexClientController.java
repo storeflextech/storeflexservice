@@ -63,9 +63,29 @@ public class StoreFlexClientController {
 	}
 
 	@GetMapping(value="/client" , produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value="client" , notes ="get storeflex client" , nickname="client")
-	public StoreFlexResponse<Object> getStoreFlexClientById(){
+	@ApiOperation(value="client" , notes ="get client details by its Id" , nickname="client")
+	public StoreFlexResponse<Object> getStoreFlexClientById(@RequestParam String clientId){
 		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		 try {
+			Object object= service.getStoreFlexClient(clientId);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("Client details for Id"+clientId);
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+			 
+		 }
+		 catch(StoreFlexServiceException e) {
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage()); 
+		 }
+		 
 		return response;
 		
 	}

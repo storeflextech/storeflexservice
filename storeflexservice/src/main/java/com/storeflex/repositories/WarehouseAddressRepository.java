@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.storeflex.entities.WareHousePhoto;
+import com.storeflex.entities.WarehouseAddress;
 
 @Repository
-public interface WarehousePhotosRepository extends JpaRepository<WareHousePhoto, UUID>{
-	@Query("from WareHousePhoto where warehouse.warehouseId=:warehouseId")
-	List<WareHousePhoto> findByWarehouseId(String warehouseId);
+public interface WarehouseAddressRepository extends JpaRepository<WarehouseAddress, UUID>{
+	@Query("from WarehouseAddress where cityId=:cityCode")
+	List<WarehouseAddress> getWarehouseByCity(String cityCode);
 
 }
