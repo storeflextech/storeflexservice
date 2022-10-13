@@ -1,7 +1,5 @@
 package com.storeflex.dao;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 
 import com.storeflex.beans.ClientProfileListBean;

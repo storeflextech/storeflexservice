@@ -22,6 +22,7 @@ import com.storeflex.beans.ClientWareHouseAddrBean;
 import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.WarehouseListBean;
+import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.dao.StoreFlexWarehouseDao;
 import com.storeflex.entities.ClientProfile;
 import com.storeflex.entities.UniqueId;
@@ -31,8 +32,10 @@ import com.storeflex.entities.WarehouseAddress;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.helpers.StoreFlexHelper;
 import com.storeflex.helpers.StoreFlexWarehouseHelper;
+import com.storeflex.repositories.CityRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
 import com.storeflex.repositories.UniquePrefixRepository;
+import com.storeflex.repositories.WarehouseAddressRepository;
 import com.storeflex.repositories.WarehousePhotosRepository;
 import com.storeflex.repositories.WarehouseRepository;
 
@@ -43,6 +46,10 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 
 	@Autowired
 	WarehouseRepository warehouseRepository;
+	@Autowired
+	WarehouseAddressRepository warehouseAddresRepository;
+	@Autowired
+	CityRepository cityRepository;
 	@Autowired
 	StoreFlexClientRepository clientRepository;
 	@Autowired
@@ -178,7 +185,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 			  warehouseBean.setStatus(warehouse.isStatus());
 			  warehouseBean.setUpdatedBy(warehouse.getUpdatedBy());
 			  warehouseBean.setUpdateDate(warehouse.getUpdateDate());
-			  warehouseBean.setWarehouseTaxId(clientId);
+			  warehouseBean.setWarehouseTaxId(warehouse.getWarehouseTaxId());
 			  
 			  ClientWareHouseAddrBean addressBean = new ClientWareHouseAddrBean();
 			  Set<ClientWareHouseAddrBean> addressBeanList =  new HashSet<ClientWareHouseAddrBean>();
@@ -218,5 +225,65 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 		  beanlist.setTotalRecords(warehousePageList.getTotalElements());
 		  beanlist.setWarehouseList(warehouseBeanList); 
 		 return beanlist;
+	}
+
+
+	@Override
+	public Set<ClientWareHousePhtBean> getWarehousePics(String warehouseId) throws StoreFlexServiceException {
+		log.info("Starting method getWarehousePics", this);
+		List<WareHousePhoto> warehousePhotoList = warehousePhotosRepository
+					.findByWarehouseId(warehouseId);
+			Set<ClientWareHousePhtBean> phtBeanList = new HashSet<ClientWareHousePhtBean>();
+			for (WareHousePhoto pht : warehousePhotoList) {
+				ClientWareHousePhtBean phtBean = new ClientWareHousePhtBean();
+				phtBean.setCreateBy(pht.getCreateBy());
+				phtBean.setCreateDate(pht.getCreateDate());
+				phtBean.setPhotoId(pht.getPhotoId());
+				phtBean.setPhtDescp(pht.getPhtDescp());
+				phtBean.setPhtName(pht.getPhtName());
+				phtBean.setPhts(pht.getPhts());
+				phtBean.setUpdatedBy(pht.getUpdatedBy());
+				phtBean.setUpdateDate(pht.getUpdateDate());
+				phtBeanList.add(phtBean);
+
+			}
+			
+		log.info("Starting method getWarehousePics", this);
+		return phtBeanList;
+	}
+
+
+	@Override
+	public WarehouseListBean getWarehouseSearch(WarehouseRequestBean build, int page, int size)
+			throws StoreFlexServiceException {
+		log.info("Starting method getWarehouseSearch", this);
+		if(null!=build.getCity()) {
+			String cityCode = cityRepository.getCityCode(build.getCity());
+			List<WarehouseAddress> addressList = warehouseAddresRepository.getWarehouseByCity(cityCode);
+			for(WarehouseAddress address:addressList) {
+				address.getWarehouse().getWarehouseId();
+				address.getWarehouse().getClientId();
+				address.getWarehouse().getDescp();
+				address.getWarehouse().getCreateBy();
+				address.getWarehouse().getCreateDate();
+				address.getWarehouse().getDescp();
+				address.getWarehouse().getProfilePhoto();
+				address.getWarehouse().getProfilePhotoName();
+				address.getWarehouse().getWarehouseName();
+				address.getAddressType();
+				address.getHouseNo();
+				address.getPlotNo();
+				address.getStreetDetails();
+				address.getCityId();
+				address.getState();
+				address.getCountryId();
+				
+				
+			}
+			
+		}
+		
+		 
+		return null;
 	}
 }
