@@ -10,6 +10,7 @@ import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
+import com.storeflex.beans.WarehouseViewBeanList;
 import com.storeflex.entities.Warehouse;
 import com.storeflex.exceptions.StoreFlexServiceException;
 
@@ -25,6 +26,6 @@ public interface StoreFlexWarehouseDao {
 
 	Set<ClientWareHousePhtBean> getWarehousePics(String warehouseId)throws StoreFlexServiceException;
 
-	WarehouseListBean getWarehouseSearch(WarehouseRequestBean build, int page, int size)throws StoreFlexServiceException;
+	WarehouseViewBeanList getWarehouseSearch(WarehouseRequestBean build, int page, int size)throws StoreFlexServiceException;
 
 }

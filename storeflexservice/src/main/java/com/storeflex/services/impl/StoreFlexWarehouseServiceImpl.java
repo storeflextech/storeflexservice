@@ -17,6 +17,7 @@ import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
+import com.storeflex.beans.WarehouseViewBeanList;
 import com.storeflex.dao.StoreFlexWarehouseDao;
 import com.storeflex.entities.Warehouse;
 import com.storeflex.exceptions.StoreFlexServiceException;
@@ -66,7 +67,7 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 
 	@Override
 	@Transactional
-	public WarehouseListBean getWarehouseSearch(WarehouseRequestBean build, int page, int size)
+	public WarehouseViewBeanList getWarehouseSearch(WarehouseRequestBean build, int page, int size)
 			throws StoreFlexServiceException {
 		log.info("Starting method getWarehouseSearch", this);
 		return dao.getWarehouseSearch(build,page,size);

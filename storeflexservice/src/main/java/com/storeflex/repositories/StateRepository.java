@@ -12,5 +12,7 @@ import com.storeflex.entities.State;
 public interface StateRepository extends JpaRepository<State,Long>{
 	@Query("from State where country.countryId=:countryId")
 	List<State> getStateByCountryId(long countryId);
+	@Query("select stateCode from State where stateName=:stateName")
+	String getStateCode(String stateName);
 
 }
