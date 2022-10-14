@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.entities.WarehouseAddress;
+import com.storeflex.view.entities.WarehouseView;
 
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchSpecification {
 
-	public Specification<WarehouseAddress> getWarehouseDetails(WarehouseRequestBean request){
+	public Specification<WarehouseView> getWarehouseDetails(WarehouseRequestBean request){
 		return (root,query,builder)->{
 			List<Predicate> predicates = new ArrayList<>();
 			if(!StringUtils.isEmpty(request.getCity())) {
@@ -29,6 +30,7 @@ public class SearchSpecification {
 			if(!StringUtils.isEmpty(request.getPincode())) {
 				predicates.add(builder.like(root.get("pincode"), "%" + request.getPincode() + "%"));
 			}
+			 query.orderBy(builder.desc(root.get("createdTime")));
 			return builder.and(predicates.toArray(new Predicate[0]));
 		};
 	}

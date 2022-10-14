@@ -56,4 +56,9 @@ public class Warehouse  implements Serializable{
 
 	@OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
 	private Set<WareHousePhoto> photos =  new HashSet<WareHousePhoto>();
-}
+
+	@OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
+	private Set<WarehouseHours> hours =  new HashSet<WarehouseHours>();
+
+
+ }

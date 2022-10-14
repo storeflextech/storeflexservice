@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
+import com.storeflex.beans.WarehouseViewBeanList;
 import com.storeflex.entities.Warehouse;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.response.StoreFlexResponse;
@@ -165,24 +167,29 @@ public class StoreFlexWarehouseController {
 	
 	@GetMapping(value = "/searchwarehouse", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "searchwarehouse", notes = "Search waharehouse", nickname = "searchwarehouse")
-	public StoreFlexResponse<WarehouseListBean> getWarehouseSearch(
+	public StoreFlexResponse<WarehouseViewBeanList> getWarehouseSearch(
 			@RequestParam(required=false) String city,
-			@RequestParam(required=false) String pincode,
+			@RequestParam(required=true) String pincode,
 			@RequestParam(required=false) String state,
 			@RequestParam(defaultValue = "0") int page,
 	        @RequestParam(defaultValue = "3") int size) {
 		log.info("Starting method wareHouse", this);
-		StoreFlexResponse<WarehouseListBean> response = new StoreFlexResponse<WarehouseListBean>();
-		 Pageable paging = PageRequest.of(page, size);
+		StoreFlexResponse<WarehouseViewBeanList> response = new StoreFlexResponse<WarehouseViewBeanList>();
 		try {
-			WarehouseListBean warehouseListBean = service.getWarehouseSearch(
+			WarehouseViewBeanList warehouseViewBeanList = service.getWarehouseSearch(
 					WarehouseRequestBean.builder().city(city).pincode(pincode).state(state).build(),page,size
 					);
-			if (null != warehouseListBean && warehouseListBean.getWarehouseList().size()>0) {
+			if (null != warehouseViewBeanList && null!=warehouseViewBeanList.getWarehouseViewBean() && warehouseViewBeanList.getWarehouseViewBean().size()>0) {
 				response.setStatus(Status.SUCCESS);
 				response.setStatusCode(Status.SUCCESS.getCode());
-				response.setMethodReturnValue(warehouseListBean);
-			} else {
+				response.setMethodReturnValue(warehouseViewBeanList);
+			}else
+			if(!StringUtils.isEmpty(warehouseViewBeanList.getErrorCode().getErrorCode())) {
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMethodReturnValue(warehouseViewBeanList);	
+			}
+			else {
 				response.setStatus(Status.BUSENESS_ERROR);
 				response.setStatusCode(Status.BUSENESS_ERROR.getCode());
 				response.setMessage("System Error....");

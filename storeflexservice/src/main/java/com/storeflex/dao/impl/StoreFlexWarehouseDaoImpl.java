@@ -13,16 +13,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ClientWareHouseAddrBean;
 import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
+import com.storeflex.beans.ErrorCodeBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
+import com.storeflex.beans.WarehouseViewBean;
+import com.storeflex.beans.WarehouseViewBeanList;
+import com.storeflex.constants.ErrorCodes;
 import com.storeflex.dao.StoreFlexWarehouseDao;
 import com.storeflex.entities.ClientProfile;
 import com.storeflex.entities.UniqueId;
@@ -33,12 +40,15 @@ import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.helpers.StoreFlexHelper;
 import com.storeflex.helpers.StoreFlexWarehouseHelper;
 import com.storeflex.repositories.CityRepository;
+import com.storeflex.repositories.StateRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
 import com.storeflex.repositories.UniquePrefixRepository;
 import com.storeflex.repositories.WarehouseAddressRepository;
 import com.storeflex.repositories.WarehousePhotosRepository;
 import com.storeflex.repositories.WarehouseRepository;
-
+import com.storeflex.view.entities.WarehouseView;
+import com.storeflex.view.repositories.WarehouseViewRepository;
+import com.storeflex.utilities.SearchSpecification;
 @Component
 public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 
@@ -47,9 +57,13 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 	@Autowired
 	WarehouseRepository warehouseRepository;
 	@Autowired
+	WarehouseViewRepository warehouseViewRepository;
+	@Autowired
 	WarehouseAddressRepository warehouseAddresRepository;
 	@Autowired
 	CityRepository cityRepository;
+	@Autowired
+	StateRepository stateRepository;
 	@Autowired
 	StoreFlexClientRepository clientRepository;
 	@Autowired
@@ -60,7 +74,8 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 	StoreFlexHelper storeflexhelper;
 	@Autowired
 	UniquePrefixRepository uniquePrefixRespository;
-	
+	@Autowired
+	SearchSpecification searchSpecification;
 	@Override
 	public Warehouse createWarehouse(ClientWareHousesBean request) throws StoreFlexServiceException {
 		 log.info("Starting method createWarehouse", this);
@@ -253,37 +268,74 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public WarehouseListBean getWarehouseSearch(WarehouseRequestBean build, int page, int size)
+	public WarehouseViewBeanList getWarehouseSearch(WarehouseRequestBean build, int page, int size)
 			throws StoreFlexServiceException {
 		log.info("Starting method getWarehouseSearch", this);
-		if(null!=build.getCity()) {
+		ErrorCodeBean errorbean = new ErrorCodeBean();
+		List<WarehouseView> list = null;
+		Pageable pageable = PageRequest.of(page, size);
+		Page<WarehouseView> pages = null;
+		List<WarehouseViewBean> beanList = new ArrayList<WarehouseViewBean>();
+		WarehouseViewBeanList warehouseViewList =  new WarehouseViewBeanList();
+		if(!StringUtils.isEmpty(build.getCity())) {
 			String cityCode = cityRepository.getCityCode(build.getCity());
-			List<WarehouseAddress> addressList = warehouseAddresRepository.getWarehouseByCity(cityCode);
-			for(WarehouseAddress address:addressList) {
-				address.getWarehouse().getWarehouseId();
-				address.getWarehouse().getClientId();
-				address.getWarehouse().getDescp();
-				address.getWarehouse().getCreateBy();
-				address.getWarehouse().getCreateDate();
-				address.getWarehouse().getDescp();
-				address.getWarehouse().getProfilePhoto();
-				address.getWarehouse().getProfilePhotoName();
-				address.getWarehouse().getWarehouseName();
-				address.getAddressType();
-				address.getHouseNo();
-				address.getPlotNo();
-				address.getStreetDetails();
-				address.getCityId();
-				address.getState();
-				address.getCountryId();
-				
-				
+			if(!StringUtils.isEmpty(cityCode)) {
+				build.setCity(cityCode);
+			}else {
+				log.error("City name"+build.getCity()+" is not in  bussniess",
+						ErrorCodes.CITY_NOT_EXIST);
+				errorbean.setErrorCode(ErrorCodes.CITY_NOT_EXIST);
+				errorbean.setErrorMessage("City name "+build.getCity()+" is not in  bussniess");
+				warehouseViewList.setErrorCode(errorbean);
+				return warehouseViewList;
+			}	
+		}
+			
+		
+		if(!StringUtils.isEmpty(build.getState())) {
+			String stateCode = stateRepository.getStateCode(build.getState());
+			if(!StringUtils.isEmpty(stateCode)) {
+				build.setState(stateCode);
+			}else {
+				log.error("State name "+build.getState()+" is not in bussniess",
+						ErrorCodes.CITY_NOT_EXIST);
+				errorbean.setErrorCode(ErrorCodes.CITY_NOT_EXIST);
+				errorbean.setErrorMessage("State name "+build.getState()+" is not in  bussniess");
+				warehouseViewList.setErrorCode(errorbean);
+				return warehouseViewList;
 			}
 			
 		}
-		
-		 
-		return null;
+		Specification<WarehouseView> viewObj = searchSpecification.getWarehouseDetails(build);
+		if(null!=viewObj) {
+			pages = warehouseViewRepository.findAll(viewObj, pageable);
+			if (pages != null && pages.getContent() != null) {
+				list = pages.getContent();
+				if (!CollectionUtils.isEmpty(list)) {
+					for (WarehouseView view : list) {
+						WarehouseViewBean viewbean = new WarehouseViewBean();
+						viewbean.setWarehouseId(view.getWarehouseId());
+						viewbean.setWarehouseName(view.getWarehouseName());
+						viewbean.setClientId(view.getClientId());
+						viewbean.setDescp(view.getDescp());
+						viewbean.setHouseNo(view.getHouseNo());
+						viewbean.setPlotNo(view.getPlotNo());
+						viewbean.setStreetAddrs(view.getStreetAddrs());
+						viewbean.setCity(view.getCity());
+						viewbean.setState(view.getState());
+						viewbean.setPincode(view.getPincode());
+						viewbean.setStatus(view.isStatus());
+						beanList.add(viewbean);
+					}
+				}
+			}
+			if(!CollectionUtils.isEmpty(beanList)) {
+				warehouseViewList.setWarehouseViewBean(beanList);
+				warehouseViewList.setTotalRecord(pages.getTotalElements());
+			}
+		} 
+		return warehouseViewList;
 	}
 }
