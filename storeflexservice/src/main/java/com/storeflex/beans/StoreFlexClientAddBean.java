@@ -27,6 +27,8 @@ public class StoreFlexClientAddBean implements Serializable{
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String plotNo;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String houseNo;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String streetDetails;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String city;

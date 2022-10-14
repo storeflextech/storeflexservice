@@ -28,6 +28,8 @@ import com.storeflex.entities.UniqueId;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.helpers.StoreFlexClientHelper;
 import com.storeflex.helpers.StoreFlexHelper;
+import com.storeflex.repositories.StoreFlexClientAddrsRepository;
+import com.storeflex.repositories.StoreFlexClientContactsRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
 import com.storeflex.repositories.UniquePrefixRepository;
 
@@ -37,6 +39,10 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 	
 	@Autowired
 	StoreFlexClientRepository storeFlexClientRepository;
+	@Autowired
+	StoreFlexClientAddrsRepository storeFlexClientAddrsRepository;
+	@Autowired
+	StoreFlexClientContactsRepository storeFlexClientContactsRepository;
 	@Autowired
 	StoreFlexHelper helper;
 	@Autowired
@@ -67,6 +73,7 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 			 clientContactSet =clientHelper.populateClientContact(request,clientProfile,clientContactSet);
 			 clientProfile.setAddresses(clientAddressSet);
 			 clientProfile.setContact(clientContactSet);
+			 clientProfile.setStatus(true);
 			 clientProfile = storeFlexClientRepository.save(clientProfile);
 			 
 			 //increase the count of Clinet ReserveId
@@ -87,6 +94,83 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 			return clientBean;
 		}
 		return null;
+	}
+	
+	
+	@Override
+	public StoreFlexClientBean updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException {
+		 log.info("Starting method getStoreFlexClient", this);
+		ClientProfile client =null;
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientBean.getClientId());
+		if(clientProfileOpt.isPresent()) {
+			client = clientProfileOpt.get();
+			Optional.ofNullable(clientBean.getCompyName()).ifPresent(client::setCompyName);
+			Optional.ofNullable(clientBean.getCompyDesc()).ifPresent(client::setCompyDesc);
+			client.setUpdatedate(LocalDateTime.now());
+			client.setUpdatedBy("ADMIN");
+			Optional.ofNullable(clientBean.getPhoto()).ifPresent(client::setPhoto);
+			Optional.ofNullable(clientBean.getPhotoName()).ifPresent(client::setPhotoName);
+			Optional.ofNullable(clientBean.getUrl()).ifPresent(client::setUrl);
+			client = storeFlexClientRepository.save(client);
+		}
+		return clientBean;
+	}
+	
+	@Override
+	public StoreFlexClientAddBean updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException {
+		log.info("Starting method getStoreFlexClient", this);
+		ClientProfile client = null;
+		Optional<ClientAddress> addressOpt = storeFlexClientAddrsRepository
+				.findById(clientBean.getAddressId());
+		if (addressOpt.isPresent()) {
+			ClientAddress address = addressOpt.get();
+			Optional.ofNullable(clientBean.getAddressType()).ifPresent(address::setAddressType);
+			Optional.ofNullable(clientBean.getPlotNo()).ifPresent(address::setPlotNo);
+			Optional.ofNullable(clientBean.getHouseNo()).ifPresent(address::setHouseNo);
+			Optional.ofNullable(clientBean.getStreetDetails()).ifPresent(address::setStreetDetails);
+			Optional.ofNullable(clientBean.getCity()).ifPresent(address::setCity);
+			Optional.ofNullable(clientBean.getState()).ifPresent(address::setState);
+			Optional.ofNullable(clientBean.getPincode()).ifPresent(address::setPincode);
+			address.setUpdateTime(LocalDateTime.now());
+			address.setUpdatedBy("ADMIN");
+			storeFlexClientAddrsRepository.save(address);
+		}
+		return clientBean;
+	}
+	
+	@Override
+	public StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException {
+		log.info("Starting method getStoreFlexClient", this);
+		Optional<ClientContacts> contactOpt = storeFlexClientContactsRepository.findById(clientBean.getContactId());
+		ClientContacts contact =null;
+		if (contactOpt.isPresent()) {
+			contact = contactOpt.get();
+			Optional.ofNullable(clientBean.getContactName()).ifPresent(contact::setContactName);
+			Optional.ofNullable(clientBean.getEmailId()).ifPresent(contact::setEmailId);
+			Optional.ofNullable(clientBean.getLandLine()).ifPresent(contact::setLandLine);
+			Optional.ofNullable(clientBean.getLandLineExt()).ifPresent(contact::setLandLineExt);
+			Optional.ofNullable(clientBean.getMobileNo()).ifPresent(contact::setMobileNo);
+			contact.setUpdateTime(LocalDateTime.now());
+			contact.setUpdatedBy("ADMIN");
+			storeFlexClientContactsRepository.save(contact);
+		}
+	
+		return clientBean;
+	}
+	
+	@Override
+	public StoreFlexClientBean deActivateClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException {
+		 log.info("Starting method getStoreFlexClient", this);
+		ClientProfile client =null;
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientBean.getClientId());
+		if(clientProfileOpt.isPresent()) {
+			client = clientProfileOpt.get();
+			client.setUpdatedate(LocalDateTime.now());
+			client.setUpdatedBy("ADMIN");
+			client.setStatus(false);
+			client = storeFlexClientRepository.save(client);
+		}
+		return clientBean;
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public class ClientContacts  implements Serializable{
 	@Column(name = "update_by")
 	private String updatedBy;
 	@Column(name = "update_date")
-	private LocalDateTime updateBy;
+	private LocalDateTime updateTime;
 	
 	@ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name="client_id")
