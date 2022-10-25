@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import com.storeflex.response.StoreFlexResponse.Status;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class StoreflexAuthController {
 	private static final Logger log = LoggerFactory.getLogger(StoreflexAuthController.class);
      
@@ -25,6 +27,7 @@ public class StoreflexAuthController {
 	AppConfiguration config;
 	@Autowired
 	LoginBean loginBean;
+	
 	
 	@PostMapping(value = "/logintest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "logintest", notes = "logintest test , passed username and password", nickname = "logintest")
