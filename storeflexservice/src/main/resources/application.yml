@@ -29,8 +29,8 @@ spring:
     multipart:
       max-file-size: 500KB
       max-request-size: 500KB
-cloud:  aws:    stack:      auto: false
-    region:      auto: true
+      
+
 testuser:
    username: storeflextest
    password: storeflex#123 
