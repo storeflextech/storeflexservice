@@ -34,14 +34,42 @@ public class StoreflexAuthController {
 	public StoreFlexResponse<Object> testLogin(@Validated @RequestBody TestAuthBean bean){
 		log.info("Starting method testLogin", this);	
 		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		if(bean.getUsername().trim().equals(config.getTestuser().trim()) && bean.getPassword().trim().equals(config.getPassword().trim())) {
+		if(bean.getUsername().trim().equals(config.getTest_user().trim()) && bean.getPassword().trim().equals(config.getTest_password().trim())) {
 			loginBean.setRedirect("/storeflexhome");
 			loginBean.setUsername(bean.getUsername());
 			response.setStatus(Status.SUCCESS);
 			response.setStatusCode(Status.SUCCESS.getCode());
 			response.setMessage("Login Success");
 			response.setMethodReturnValue(loginBean);
-		}else {
+		}
+		else
+		if(bean.getUsername().trim().equals(config.getSl_user().trim()) && bean.getPassword().trim().equals(config.getSl_password().trim())) {
+				loginBean.setRedirect("/storeflexuserdashboard");
+				loginBean.setUsername(bean.getUsername());
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMessage("Login Success");
+				response.setMethodReturnValue(loginBean);
+			}
+		else
+			if(bean.getUsername().trim().equals(config.getCl_user().trim()) && bean.getPassword().trim().equals(config.getCl_password().trim())) {
+				loginBean.setRedirect("/storeflexclientdashboard");
+				loginBean.setUsername(bean.getUsername());
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMessage("Login Success");
+				response.setMethodReturnValue(loginBean);
+			}
+		else
+		if(bean.getUsername().trim().equals(config.getCust_user().trim()) && bean.getPassword().trim().equals(config.getCust_password().trim())) {
+			loginBean.setRedirect("/storeflexcustdashboard");
+			loginBean.setUsername(bean.getUsername());
+			response.setStatus(Status.SUCCESS);
+			response.setStatusCode(Status.SUCCESS.getCode());
+			response.setMessage("Login Success");
+			response.setMethodReturnValue(loginBean);
+		}
+		else {
 			loginBean.setRedirect("/errorPage");
 			loginBean.setUsername(bean.getUsername());
 			response.setStatus(Status.BUSENESS_ERROR);
