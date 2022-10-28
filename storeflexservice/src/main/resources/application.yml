@@ -32,5 +32,11 @@ spring:
       
 
 testuser:
-   username: storeflextest
-   password: storeflex#123 
+   username_temp: storeflextest
+   password_temp: storeflex#123
+   username_SL: storeflextest_SL
+   password_SL: storeflex#123
+   username_CL: storeflextest_CL
+   password_CL: storeflex#123 
+   username_CU: storeflextest_CU
+   password_CU: storeflex#123 
