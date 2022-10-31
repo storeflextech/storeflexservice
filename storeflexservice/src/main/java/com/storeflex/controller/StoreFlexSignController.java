@@ -11,14 +11,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.boot.configurationprocessor.json.*;
 
 import com.storeflex.response.StoreFlexResponse;
 import com.storeflex.response.StoreFlexResponse.Status;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 public class StoreFlexSignController {
@@ -26,7 +31,7 @@ public class StoreFlexSignController {
 
     @PostMapping(value="/sign" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="sign" , notes ="sign storeflex client" , nickname="sign")
-	public StoreFlexResponse<Object> storeFlexClient(){
+	public StoreFlexResponse<Object> signDocument(){
         StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
 
         try{
@@ -62,6 +67,46 @@ public class StoreFlexSignController {
         }
         
         return response;
+	}
+
+    @PostMapping(value="/signstatus" )
+	@ApiOperation(value="signstatus" , notes ="sign storeflex client" , nickname="signstatus")
+    public ResponseEntity<Object> signStatus(String request){
+        //StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+
+        try{
+            JSONObject jObject = new JSONObject(request);
+            log.info("Response from Signing", jObject.toString());
+            //this.sendForSigning();
+
+            
+        }
+		catch(JSONException e)
+        {
+            /*response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			response.setMessage("System Error...."+e.getMessage());*/
+        }
+        /*catch(UnsupportedEncodingException e)
+        {
+            response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			response.setMessage("System Error...."+e.getMessage());
+        }
+        catch(IOException e)
+        {
+            response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			response.setMessage("System Error...."+e.getMessage());
+        }
+        catch(InterruptedException e)
+        {
+            response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			response.setMessage("System Error...."+e.getMessage());
+        }*/
+        
+        return ResponseEntity.ok().build();
 	}
 
     private void sendForSigning() throws JSONException, UnsupportedEncodingException, IOException, InterruptedException
