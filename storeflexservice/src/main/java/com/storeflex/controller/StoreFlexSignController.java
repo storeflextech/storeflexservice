@@ -11,35 +11,58 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.*;
 
+import com.storeflex.beans.StoreFlexClientBean;
+import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.response.StoreFlexResponse;
 import com.storeflex.response.StoreFlexResponse.Status;
+import com.storeflex.services.StoreFlexClientService;
+import com.storeflex.services.StoreFlexClientSignService;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 public class StoreFlexSignController {
     private static final Logger log = LoggerFactory.getLogger(StoreFlexProfileController.class);
 
+    @Autowired
+	StoreFlexClientSignService clientSignService;
+
+    @Autowired
+	StoreFlexClientService clientService;
+
     @PostMapping(value="/sign" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="sign" , notes ="sign storeflex client" , nickname="sign")
-	public StoreFlexResponse<Object> signDocument(){
+	public StoreFlexResponse<Object> signDocument(@RequestParam String clientId){
         StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
 
         try{
-            this.sendForSigning();
+            StoreFlexClientBean client = (StoreFlexClientBean) clientService.getStoreFlexClient(clientId);
+            
+            if (client != null)
+            {
+                JSONObject returnVal = this.sendForSigning(client.getContact().iterator().next().getContactName(), client.getContact().iterator().next().getEmailId());
 
-            response.setStatus(Status.SUCCESS);
-            response.setStatusCode(Status.SUCCESS.getCode());
-            response.setMessage("Sent for Client Signing successfully");
+                String signRequestId = returnVal.getJSONObject("requests").getString("request_id");
+                String signRequeststatus = returnVal.getJSONObject("requests").getString("request_status");
+
+                clientSignService.createClientSignInfo(clientId, signRequestId, signRequeststatus);
+                response.setStatus(Status.SUCCESS);
+                response.setStatusCode(Status.SUCCESS.getCode());
+                response.setMessage("Sent for Client Signing successfully");
+            }            
+        }
+        catch(StoreFlexServiceException e) 
+        {
+            response.setStatus(Status.BUSENESS_ERROR);
+            response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+            response.setMessage("System Error...."+e.getMessage()); 
         }
 		catch(JSONException e)
         {
@@ -76,6 +99,7 @@ public class StoreFlexSignController {
 
         try{
             JSONObject jObject = new JSONObject(request);
+            String requestStatus = jObject.getJSONObject("requests").getString("request_status");
             log.info("Response from Signing", jObject.toString());
             //this.sendForSigning();
 
@@ -109,7 +133,7 @@ public class StoreFlexSignController {
         return ResponseEntity.ok().build();
 	}
 
-    private void sendForSigning() throws JSONException, UnsupportedEncodingException, IOException, InterruptedException
+    private JSONObject sendForSigning(String name, String emailId) throws JSONException, UnsupportedEncodingException, IOException, InterruptedException
     {
         /*HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://sign.zoho.in/api/v1/templates/34025000000019007")).header("Authorization","Zoho-oauthtoken "+ "1000.c61486d96394dc8aa4461d4f353a0bec.ee2ca369bc3b47272ccb81c0f38c12cf").GET().build();
@@ -131,15 +155,17 @@ public class StoreFlexSignController {
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("https://sign.zoho.in/api/v1/templates/34025000000019007/createdocument"))
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .header("Authorization","Zoho-oauthtoken "+ "1000.97c36dbab11dbff4bf1e29c29995fd90.c7593419157959516c22aef099d08813")
-            .POST(BodyPublishers.ofString("is_quicksend=true&data=" + URLEncoder.encode(fillClientTemplate(), "UTF-8")))
+            .header("Authorization","Zoho-oauthtoken "+ "1000.ef1fc9751eee6d21dd0fd2892ffbb1a0.c309776ae8af5f2dace43e1dc5b5914e")
+            .POST(BodyPublishers.ofString("is_quicksend=true&data=" + URLEncoder.encode(fillClientTemplate(name, emailId), "UTF-8")))
             .build();
 
         HttpResponse<String> tes = client.send(request, HttpResponse.BodyHandlers.ofString());
-        log.info("Response from Signing", tes.body());        
+        String returnVal = tes.body();
+        log.info("Response from Signing", returnVal);
+        return new JSONObject(returnVal);        
     }
 
-    private String fillClientTemplate() throws JSONException
+    private String fillClientTemplate(String name, String emailId) throws JSONException
     {
         log.info("Starting method filClienTemplate");
 
@@ -148,8 +174,8 @@ public class StoreFlexSignController {
         JSONObject actionJson = new JSONObject();
         actionJson.put("action_type","SIGN");
         //TODO: Fill up before running.
-        actionJson.put("recipient_email","");
-        actionJson.put("recipient_name","");
+        actionJson.put("recipient_email", emailId);
+        actionJson.put("recipient_name", name);
         actionJson.put("action_id","34025000000019032");
         //actionJson.put("private_note","Please sign this draft agreement");
         actionJson.put("verify_recipient", false);
