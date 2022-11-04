@@ -94,41 +94,26 @@ public class StoreFlexSignController {
 
     @PostMapping(value="/signstatus" )
 	@ApiOperation(value="signstatus" , notes ="sign storeflex client" , nickname="signstatus")
-    public ResponseEntity<Object> signStatus(String request){
-        //StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-
-        try{
+    public ResponseEntity<Object> signStatus(String request)
+    {        
+        try
+        {
             JSONObject jObject = new JSONObject(request);
-            String requestStatus = jObject.getJSONObject("requests").getString("request_status");
+            String signRequestId = jObject.getJSONObject("requests").getString("request_id");
+            String signRequeststatus = jObject.getJSONObject("requests").getString("request_status");
             log.info("Response from Signing", jObject.toString());
-            //this.sendForSigning();
-
+            clientSignService.updateClientSignInfo(signRequestId, signRequeststatus);  
             
+            //clientSignService.createClientSignInfo("CL-101", signRequestId, signRequeststatus);
         }
 		catch(JSONException e)
         {
-            /*response.setStatus(Status.BUSENESS_ERROR);
-			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			response.setMessage("System Error...."+e.getMessage());*/
+            log.info("Error reading JSON Object from request");
         }
-        /*catch(UnsupportedEncodingException e)
+        catch(StoreFlexServiceException e) 
         {
-            response.setStatus(Status.BUSENESS_ERROR);
-			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			response.setMessage("System Error...."+e.getMessage());
+            log.info("Service Exception:", e.getMessage());
         }
-        catch(IOException e)
-        {
-            response.setStatus(Status.BUSENESS_ERROR);
-			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			response.setMessage("System Error...."+e.getMessage());
-        }
-        catch(InterruptedException e)
-        {
-            response.setStatus(Status.BUSENESS_ERROR);
-			response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			response.setMessage("System Error...."+e.getMessage());
-        }*/
         
         return ResponseEntity.ok().build();
 	}
