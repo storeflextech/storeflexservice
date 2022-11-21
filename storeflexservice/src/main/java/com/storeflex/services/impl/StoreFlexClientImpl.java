@@ -1,5 +1,8 @@
 package com.storeflex.services.impl;
 
+import java.io.IOException;
+import java.util.Map;
+
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -7,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ClientProfileListBean;
 import com.storeflex.beans.StoreFlexClientAddBean;
@@ -72,6 +76,20 @@ public class StoreFlexClientImpl implements StoreFlexClientService{
 	public StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException {
 		 log.info("Starting method updateClientContacts", this);
 		return dao.updateClientContacts(clientBean);
+	}
+
+	@Override
+	@Transactional
+	public Object uploadClientProfilePic(String clientId, MultipartFile file) throws StoreFlexServiceException, IOException {
+		 log.info("Starting method uploadClientProfilePic", this);
+		 return dao.updateClientContacts(clientId,file);
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Boolean> deleteClientById(String clientId) throws StoreFlexServiceException {
+		 log.info("Starting method deleteClientById", this);
+		 return dao.deleteClientById(clientId);
 	}
 
 }

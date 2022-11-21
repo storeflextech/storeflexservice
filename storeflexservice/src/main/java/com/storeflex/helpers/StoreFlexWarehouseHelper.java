@@ -29,8 +29,14 @@ public class StoreFlexWarehouseHelper {
 			 address.setState(addressBean.getState());
 			 address.setCountryId(addressBean.getCountry());
 			 address.setPincode(addressBean.getPincode());
-			 address.setCreateBy("ADMIN");
-			 address.setCreateDate(LocalDateTime.now());
+			 if(null==request.getWarehouseId()) {
+				 address.setCreateBy("ADMIN");
+				 address.setCreateDate(LocalDateTime.now()); 
+			 }
+			 else {
+				 address.setUpdatedBy("ADMIN");
+				 address.setUpdateDate(LocalDateTime.now());  
+			 }
 			 address.setWarehouse(warehouse);
 			 addressSet.add(address);
 		 }

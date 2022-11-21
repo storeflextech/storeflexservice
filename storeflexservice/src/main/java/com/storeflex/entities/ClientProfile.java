@@ -40,7 +40,8 @@ public class ClientProfile  implements Serializable{
 	private String photoName;
 	@Column(name = "compny_url")
 	private String url;
-
+	@Column(name = "compny_gstno")
+	private String gstNo;
 	@Column(name = "created_by")
 	private String createBy;
 	@Column(name = "created_date")

@@ -29,12 +29,14 @@ public class StoreFlexClientBean implements Serializable{
 	private String compyName;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String compyDesc;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL) 
 	private byte[] photo;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String photoName;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String url;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String gstNo;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String createBy;
 	@JsonInclude(JsonInclude.Include.NON_NULL)

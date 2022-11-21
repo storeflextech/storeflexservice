@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -16,7 +17,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,7 +54,7 @@ public class StoreFlexWarehouseController {
 		Object object = null;
 		try {
 			Warehouse warehouse = service.createWarehouse(request);
-			object = service.createWarehouse(warehouse.getWarehouseId());
+			object = service.getWarehouseById(warehouse.getWarehouseId());
 			if (null != object) {
 				response.setStatus(Status.SUCCESS);
 				response.setStatusCode(Status.SUCCESS.getCode());
@@ -70,6 +73,32 @@ public class StoreFlexWarehouseController {
 		log.info("End method wareHouse", this);
 		return response;
 	}
+	
+	@PostMapping(value="/uploadWareHouseProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value="uploadWareHouseProfilePic" , notes ="upload storeflex WareHouse profile pic , input wareHouseId , profile name and pciture" , nickname="uploadWareHouseProfilePic")
+	public StoreFlexResponse<Object>uploadWareHouseProfilePic(@RequestParam("warehouseId") String warehouseId,@RequestParam("wareHousePhoto") MultipartFile file) throws IOException{
+		log.info("Starting method uploadClientProfilePic", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Object object;
+		try {
+			object = service.uploadWareHouseProfilePic(warehouseId,file);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		return response;
+	}
 
 	@PostMapping(value = "/uploadwarehousepics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "uploadwarehousepics", notes = "upload warehouse pics", nickname = "uploadwarehousepics")
@@ -84,11 +113,13 @@ public class StoreFlexWarehouseController {
 					try {
 						service.upload(file, clientId,warehouseId);
 					} catch (StoreFlexServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						response.setStatus(Status.BUSENESS_ERROR);
+						response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+						response.setMessage("System Error...." +"Input is not valid "+e.getMessage());	
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						response.setStatus(Status.BUSENESS_ERROR);
+						response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+						response.setMessage("System Error...." +"Input is not valid "+e.getMessage());	
 					}
 					filesNames.add(file.getOriginalFilename());
 				});
@@ -113,9 +144,9 @@ public class StoreFlexWarehouseController {
 	}
 
 	
-	@GetMapping(value = "/warehouse", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "warehouse", notes = "get storeflex warehouse for client store", nickname = "warehouse")
-	public StoreFlexResponse<WarehouseListBean> getWarehouse(@RequestParam String clientId,
+	@GetMapping(value = "/warehouseByClientId", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "warehouse", notes = "get storeflex warehouse for client Id", nickname = "warehouse")
+	public StoreFlexResponse<WarehouseListBean> warehouseByClientId(@RequestParam String clientId,
 			@RequestParam(defaultValue = "0") int page,
 	        @RequestParam(defaultValue = "3") int size) {
 		log.info("Starting method wareHouse", this);
@@ -140,6 +171,61 @@ public class StoreFlexWarehouseController {
 		log.info("End method wareHouse", this);
 		return response;
 	}
+	
+	@GetMapping(value = "/warehouseById", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "warehouseById", notes = "get storeflex warehouse by Id", nickname = "warehouseById")
+	public StoreFlexResponse<Object> getWarehouseById(@RequestParam String warehouseId) {
+		log.info("Starting method warehouseById", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Object object= null;
+		try {
+			object = service.getWarehouseById(warehouseId);
+			if (null != object) {
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMethodReturnValue(object);
+			} else {
+				response.setStatus(Status.BUSENESS_ERROR);
+				response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+				response.setMessage("System Error....");
+			}
+		} catch (StoreFlexServiceException e) {
+			response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+			response.setMessage("System Error...." + e.getMessage());
+		}
+		log.info("End method wareHouse", this);
+		return response;
+	}
+	
+	@DeleteMapping(value = "/warehouse")
+	@ApiOperation(value = "warehouseId", notes = "Delete warehouse from bussniess", nickname = "Delete warehouse from bussniess")
+	public StoreFlexResponse<Map> deleteWarehouseById(@RequestParam(value = "warehouseId") String warehouseId){
+		log.info("Starting method deleteWarehouseById", this);
+		StoreFlexResponse<Map> response =  new StoreFlexResponse<Map>();
+		Map<String, Boolean> mapObject;
+		try {
+			mapObject = service.deleteWarehouseById(warehouseId);
+			if (!CollectionUtils.isEmpty(mapObject)) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("WarehouseId" +warehouseId+" Successfully out from bussniess ");
+				 response.setMethodReturnValue(mapObject);	
+			}else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+				 response.setMessage("Warehouse" +warehouseId+" not found");
+				 response.setMethodReturnValue(mapObject);	
+			}
+		}catch(StoreFlexServiceException e) {
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+			 response.setMessage("System error ..."+e.getMessage());
+		}
+		log.info("End method deleteWarehouseById", this);
+		return response;
+	}
+	
 	
 	@GetMapping(value = "/warehousepics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "warehousepics", notes = "get warehouse pics", nickname = "warehousepics")

@@ -46,5 +46,5 @@ public class StoreFlexClientAddBean implements Serializable{
 	private String updatedBy;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonFormat(pattern="yyyy-MM-dd")
-	private LocalDateTime updateBy;
+	private LocalDateTime updateDate;
 }

@@ -31,8 +31,14 @@ public class StoreFlexClientHelper {
 			 address.setState(clientAddressReq.getCity());
 			 address.setCountry(clientAddressReq.getCountry());
 			 address.setPincode(clientAddressReq.getPincode());
-			 address.setCreateBy("ADMIN");
-			 address.setCreateDate(LocalDateTime.now());
+			 if(null!=request.getClientId()) {
+				 address.setUpdatedBy("ADMIN");
+				 address.setUpdateTime(LocalDateTime.now());
+			 }else {
+				 address.setCreateBy("ADMIN");
+				 address.setCreateDate(LocalDateTime.now()); 
+			 }
+			
 			 address.setClientProfile(clientProfile);
 			 clientAddressSet.add(address);
 		 }
@@ -45,8 +51,13 @@ public class StoreFlexClientHelper {
 		for(StoreFlexClientContactBean clientContactReq : request.getContact()) {
 			 ClientContacts contacts = new ClientContacts();
 			 contacts.setContactName(clientContactReq.getContactName());
-			 contacts.setCreateBy("ADMIN");
-			 contacts.setCreateDate(LocalDateTime.now());
+			 if(null!=request.getClientId()) {
+				 contacts.setUpdatedBy("ADMIN");
+				 contacts.setUpdateTime(LocalDateTime.now());
+			 }else {
+				 contacts.setCreateBy("ADMIN");
+				 contacts.setCreateDate(LocalDateTime.now()); 
+			 }
 			 contacts.setEmailId(clientContactReq.getEmailId());
 			 contacts.setLandLineExt(clientContactReq.getLandLineExt());
 			 contacts.setLandLine(clientContactReq.getLandLine());
@@ -67,9 +78,13 @@ public class StoreFlexClientHelper {
 		clientBean.setCompyName(clientProfile.getCompyName());
 	    clientBean.setCreateBy(clientProfile.getCreateBy());
 	    clientBean.setCreateDate(clientProfile.getCreateDate());
+	    clientBean.setUpdatedate(clientProfile.getUpdatedate());
+	    clientBean.setUpdatedBy(clientProfile.getUpdatedBy());
 	    clientBean.setUrl(clientProfile.getUrl());
 	    clientBean.setPhotoName(clientProfile.getPhotoName());
 	    clientBean.setPhoto(clientProfile.getPhoto());
+	    clientBean.setGstNo(clientProfile.getGstNo());
+	    clientBean.setStatus(clientProfile.isStatus());
 	    
 	    Set<ClientAddress> clientAddressSet= clientProfile.getAddresses();
 	    if(!CollectionUtils.isEmpty(clientAddressSet)) {
@@ -83,6 +98,10 @@ public class StoreFlexClientHelper {
 	    		 address.setState(clientAdd.getState());
 	    		 address.setPincode(clientAdd.getPincode());
 	    		 address.setCountry(clientAdd.getCountry());
+	    		 address.setCreateBy(clientAdd.getCreateBy());
+	    		 address.setCreateDate(clientAdd.getCreateDate());
+	    		 address.setUpdatedBy(clientAdd.getUpdatedBy());
+	    		 address.setUpdateDate(clientAdd.getUpdateTime());
 	    		 addressSet.add(address);
 	    	 }
 	    }

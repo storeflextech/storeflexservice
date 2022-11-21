@@ -1,6 +1,7 @@
 package com.storeflex.dao;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ public interface StoreFlexWarehouseDao {
 
 	Warehouse createWarehouse(ClientWareHousesBean request)throws StoreFlexServiceException;
 
-	Object createWareHouse(String warehouseId)throws StoreFlexServiceException;
+	Object getWarehouseById(String warehouseId)throws StoreFlexServiceException;
 
 	void upload(MultipartFile file, String clientId,String warehouseId) throws StoreFlexServiceException, IOException;
 
@@ -27,5 +28,9 @@ public interface StoreFlexWarehouseDao {
 	Set<ClientWareHousePhtBean> getWarehousePics(String warehouseId)throws StoreFlexServiceException;
 
 	WarehouseViewBeanList getWarehouseSearch(WarehouseRequestBean build, int page, int size)throws StoreFlexServiceException;
+
+	Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file)throws StoreFlexServiceException, IOException;
+
+	Map<String, Boolean> deleteWarehouseById(String warehouseId)throws StoreFlexServiceException;
 
 }

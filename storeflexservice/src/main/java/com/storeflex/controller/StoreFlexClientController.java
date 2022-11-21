@@ -1,19 +1,25 @@
 package com.storeflex.controller;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 
 import com.storeflex.beans.ClientProfileListBean;
@@ -65,6 +71,32 @@ public class StoreFlexClientController {
 		return response;
 		
 	}
+	
+	@PostMapping(value="/uploadClientProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value="uploadClientProfilePic" , notes ="upload storeflex client profile pic , input client Id , profile name and pciture" , nickname="uploadClientProfilePic")
+	public StoreFlexResponse<Object>uploadClientProfilePic(@RequestParam String clientId,@RequestParam("clientPhoto") MultipartFile file) throws IOException{
+		log.info("Starting method uploadClientProfilePic", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Object object;
+		try {
+			object = service.uploadClientProfilePic(clientId,file);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		return response;
+	}
 
 	@GetMapping(value="/client" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="client" , notes ="get client details by its Id" , nickname="client")
@@ -93,6 +125,33 @@ public class StoreFlexClientController {
 		 log.info("End method storeFlexClient", this);
 		return response;
 		
+	}
+	
+	@DeleteMapping(value = "/client")
+	@ApiOperation(value = "client", notes = "Delete client from bussniess", nickname = "Delete client from bussniess")
+	public StoreFlexResponse<Map> deleteClientById(@RequestParam(value = "clientId") String clientId){
+		log.info("Starting method deleteClientById", this);
+		StoreFlexResponse<Map> response =  new StoreFlexResponse<Map>();
+		Map<String, Boolean> mapObject;
+		try {
+			mapObject = service.deleteClientById(clientId);
+			if (!CollectionUtils.isEmpty(mapObject)) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("clientId" +clientId+" Successfully out from bussniess ");
+				 response.setMethodReturnValue(mapObject);	
+			}else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+				 response.setMessage("clientId" +clientId+" not found");
+				 response.setMethodReturnValue(mapObject);	
+			}
+		}catch(StoreFlexServiceException e) {
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+			 response.setMessage("System error ..."+e.getMessage());
+		}
+		return response;
 	}
 	
 	@GetMapping(value="/clients" , produces = MediaType.APPLICATION_JSON_VALUE)

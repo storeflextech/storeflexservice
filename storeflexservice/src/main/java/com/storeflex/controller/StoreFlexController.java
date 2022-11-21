@@ -35,6 +35,18 @@ public class StoreFlexController {
 	 @Autowired
 	 StoreFlexService service;
 	 
+	 @GetMapping(value = "/healthCheck")
+		@ApiOperation(value = "healthCheck", notes = "Check Deployment Status", nickname = "healthCheck")
+		public StoreFlexResponse<Object> healthCheck() {
+			log.info("Starting method", this);
+			StoreFlexResponse<Object> caseMgntServiceResponse = new StoreFlexResponse<Object>();
+			caseMgntServiceResponse.setStatus(Status.SUCCESS);
+			caseMgntServiceResponse.setStatusCode(Status.SUCCESS.getCode());
+			caseMgntServiceResponse.setMessage("healthCheck status good");
+			return caseMgntServiceResponse;
+		}
+	 
+	 
 	 @PostMapping(value="/storeflex" ,consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflex" , notes ="Create Store flex company details" , nickname="storeflex")
 	 public StoreFlexResponse<Object> createStoreFlex(@Validated @RequestBody StoreFlexBean storeFlexReq){
