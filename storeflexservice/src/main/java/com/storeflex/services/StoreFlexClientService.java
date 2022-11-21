@@ -1,6 +1,10 @@
 package com.storeflex.services;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ClientProfileListBean;
 import com.storeflex.beans.StoreFlexClientAddBean;
@@ -24,4 +28,8 @@ public interface StoreFlexClientService {
 	Object updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException;
 
 	Object updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException;
+
+	Object uploadClientProfilePic(String clientId, MultipartFile file)throws StoreFlexServiceException, IOException;
+
+	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 }

@@ -1,6 +1,7 @@
 package com.storeflex.services.impl;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,9 +40,9 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 
 	@Override
 	@Transactional
-	public Object createWarehouse(String warehouseId) throws StoreFlexServiceException {
+	public Object getWarehouseById(String warehouseId) throws StoreFlexServiceException {
 		 log.info("Starting method createWarehouse", this);
-		return dao.createWareHouse(warehouseId);
+		return dao.getWarehouseById(warehouseId);
 	}
 
 	@Override
@@ -71,6 +72,20 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 			throws StoreFlexServiceException {
 		log.info("Starting method getWarehouseSearch", this);
 		return dao.getWarehouseSearch(build,page,size);
+	}
+
+	@Override
+	@Transactional
+	public Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file) throws StoreFlexServiceException, IOException {
+		log.info("Starting method uploadWareHouseProfilePic", this);
+		return dao.uploadWareHouseProfilePic(warehouseId,file);
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Boolean> deleteWarehouseById(String warehouseId) throws StoreFlexServiceException {
+		log.info("Starting method deleteWarehouseById", this);
+		return dao.deleteWarehouseById(warehouseId);
 	}
 
 }

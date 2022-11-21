@@ -1,6 +1,10 @@
 package com.storeflex.dao;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ClientProfileListBean;
 import com.storeflex.beans.StoreFlexClientAddBean;
@@ -24,6 +28,10 @@ public interface StoreFlexClientDao {
 	StoreFlexClientAddBean updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException;
 
 	StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException;
+
+	Object updateClientContacts(String clientId, MultipartFile file)throws StoreFlexServiceException, IOException;
+
+	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 
 	
 

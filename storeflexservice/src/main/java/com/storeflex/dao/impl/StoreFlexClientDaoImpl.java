@@ -1,10 +1,13 @@
 package com.storeflex.dao.impl;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexClientBean;
 import com.storeflex.beans.ClientProfileListBean;
@@ -32,6 +36,7 @@ import com.storeflex.repositories.StoreFlexClientAddrsRepository;
 import com.storeflex.repositories.StoreFlexClientContactsRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
 import com.storeflex.repositories.UniquePrefixRepository;
+import com.storeflex.utilities.ImageUtility;
 
 @Component
 public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
@@ -61,14 +66,20 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 		 Set<ClientAddress> clientAddressSet =  new HashSet<ClientAddress>();
 		 Set<ClientContacts> clientContactSet =  new HashSet<ClientContacts>();
 		 if(null!=request) {
-			 clientProfile.setClientId(uniqueId.getPrex()+uniqueId.getNextReserveId());
+			 if(null==request.getClientId()) {
+				 clientProfile.setClientId(uniqueId.getPrex()+uniqueId.getNextReserveId());
+				 clientProfile.setCreateBy("ADMIN");
+				 clientProfile.setCreateDate(LocalDateTime.now());
+			 }
+			 else {
+				 clientProfile.setClientId(request.getClientId());
+				 clientProfile.setUpdatedBy("ADMIN");
+				 clientProfile.setUpdatedate(LocalDateTime.now());
+			 }
 			 clientProfile.setCompyDesc(request.getCompyDesc());
 			 clientProfile.setCompyName(request.getCompyName());
-			 clientProfile.setCreateBy("ADMIN");
-			 clientProfile.setCreateDate(LocalDateTime.now());
-			 clientProfile.setPhotoName(request.getPhotoName());
-			 clientProfile.setPhoto(request.getPhoto());
 		     clientProfile.setUrl(request.getUrl());
+		     clientProfile.setGstNo(request.getGstNo());
 			 clientAddressSet = clientHelper.populateClientAddress(request, clientProfile, clientAddressSet);
 			 clientContactSet =clientHelper.populateClientContact(request,clientProfile,clientContactSet);
 			 clientProfile.setAddresses(clientAddressSet);
@@ -108,8 +119,11 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 			Optional.ofNullable(clientBean.getCompyDesc()).ifPresent(client::setCompyDesc);
 			client.setUpdatedate(LocalDateTime.now());
 			client.setUpdatedBy("ADMIN");
-			Optional.ofNullable(clientBean.getPhoto()).ifPresent(client::setPhoto);
-			Optional.ofNullable(clientBean.getPhotoName()).ifPresent(client::setPhotoName);
+			/*
+			 * Optional.ofNullable(clientBean.getPhoto()).ifPresent(client::setPhoto);
+			 * Optional.ofNullable(clientBean.getPhotoName()).ifPresent(client::setPhotoName
+			 * );
+			 */
 			Optional.ofNullable(clientBean.getUrl()).ifPresent(client::setUrl);
 			client = storeFlexClientRepository.save(client);
 		}
@@ -192,6 +206,39 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 		listBean.setTotalRecords(clientListPageable.getTotalElements());
 		listBean.setClientList(clientBeanList);
 		return listBean;
+	}
+
+	@Override
+	public Object updateClientContacts(String clientId, MultipartFile file) throws StoreFlexServiceException, IOException {
+		 log.info("Starting method updateClientContacts", this);
+		 ClientProfile clientProfile =null;
+		 Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
+		 if(clientProfileOpt.isPresent()) {
+			 clientProfile= clientProfileOpt.get();
+			 clientProfile.setPhotoName(file.getOriginalFilename());
+			 clientProfile.setPhoto(ImageUtility.compressImage(file.getBytes()));
+			 storeFlexClientRepository.save(clientProfile);
+		 }
+		return clientProfile;
+	}
+
+	@Override
+	public Map<String, Boolean> deleteClientById(String clientId) throws StoreFlexServiceException {
+		 log.info("Starting method deleteClientById", this);
+		 Map<String, Boolean> response = new HashMap<>();
+		 ClientProfile clientProfile =null;
+		 Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
+		 if(clientProfileOpt.isPresent()) {
+			 clientProfile= clientProfileOpt.get();
+			 clientProfile.setStatus(false);
+			 clientProfile.setUpdatedate(LocalDateTime.now());
+			 clientProfile.setUpdatedBy("ADMIN");
+			 storeFlexClientRepository.save(clientProfile);
+			 response.put("deleted", Boolean.TRUE);
+		 }else {
+			 response.put("deleted", Boolean.FALSE); 
+		 }
+		return response;
 	}
 
 }

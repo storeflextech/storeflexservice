@@ -3,8 +3,10 @@ package com.storeflex.dao.impl;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -48,6 +50,7 @@ import com.storeflex.repositories.WarehousePhotosRepository;
 import com.storeflex.repositories.WarehouseRepository;
 import com.storeflex.view.entities.WarehouseView;
 import com.storeflex.view.repositories.WarehouseViewRepository;
+import com.storeflex.utilities.ImageUtility;
 import com.storeflex.utilities.SearchSpecification;
 @Component
 public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
@@ -89,10 +92,18 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 			 if(clientProfileOpt.isPresent()) {
 				 WarehouseAddress address = new WarehouseAddress();
 				 Set<WarehouseAddress> addressSet = new HashSet<WarehouseAddress>();
-				 warehouse.setWarehouseId(uniqueId.getPrex()+uniqueId.getNextReserveId());
-				 warehouse.setClientId(request.getClientId());
-				 warehouse.setCreateBy("ADMIN");
-				 warehouse.setCreateDate(LocalDateTime.now());
+				 if(null==request.getWarehouseId()) {
+					 warehouse.setWarehouseId(uniqueId.getPrex()+uniqueId.getNextReserveId());
+					 warehouse.setClientId(request.getClientId()); 
+					 warehouse.setCreateBy("ADMIN");
+					 warehouse.setCreateDate(LocalDateTime.now()); 
+				 }
+				 else {
+					 warehouse.setWarehouseId(request.getWarehouseId());
+					 warehouse.setClientId(request.getClientId()); 
+					 warehouse.setUpdatedBy("ADMIN");
+					 warehouse.setUpdateDate(LocalDateTime.now());  
+				 }
 				 warehouse.setWarehouseName(request.getWarehouseName());
 				 warehouse.setDescp(request.getDescp());
 				 warehouse.setStatus(true);
@@ -106,7 +117,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 				 }
 				 warehouse = warehouseRepository.save(warehouse);
 				 
-				 //increase the count of Clinet ReserveId
+				 //increase the count of Client ReserveId
 				 uniqueId.setNextReserveId(uniqueId.getNextReserveId()+1);
 				 uniquePrefixRespository.save(uniqueId);
 			 }else {
@@ -122,7 +133,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 
 
 	@Override
-	public Object createWareHouse(String warehouseId) throws StoreFlexServiceException {
+	public Object getWarehouseById(String warehouseId) throws StoreFlexServiceException {
 		 log.info("Starting method createWarehouse", this);
 	     Optional<Warehouse> warehouseOpt= warehouseRepository.findById(warehouseId);
 	     if(warehouseOpt.isPresent()) {
@@ -138,6 +149,10 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 	    	 warehousebean.setProfilePhoto(warehouse.getProfilePhoto());
 	    	 warehousebean.setStatus(warehouse.isStatus());
 	    	 warehousebean.setWarehouseTaxId(warehouse.getWarehouseTaxId());
+	    	 warehousebean.setCreateBy(warehouse.getCreateBy());
+	    	 warehousebean.setCreateDate(warehouse.getCreateDate());
+	    	 warehousebean.setUpdatedBy(warehouse.getUpdatedBy());
+	    	 warehousebean.setUpdateDate(warehouse.getUpdateDate());
 	    	 Set<ClientWareHouseAddrBean> addressSet   = new HashSet<ClientWareHouseAddrBean>();
 	    	 for(WarehouseAddress address :warehouse.getAddress()) {
 	    		 warehouseAddreBean.setAddressId(address.getAddressId());
@@ -150,10 +165,11 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 	    		 warehouseAddreBean.setPincode(address.getPincode());
 	    		 warehouseAddreBean.setCreateBy(address.getCreateBy());
 	    		 warehouseAddreBean.setCreateDate(address.getCreateDate());
+	    		 warehouseAddreBean.setUpdatedBy(warehouse.getUpdatedBy());
+	    		 warehouseAddreBean.setUpdateDate(warehouse.getUpdateDate());
 	    		 addressSet.add(warehouseAddreBean);
 	    	 }
 	    	 warehousebean.setAddress(addressSet);
-	    	 
 	    	 return warehousebean;
 	     }
 		return null;
@@ -337,5 +353,40 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 			}
 		} 
 		return warehouseViewList;
+	}
+
+
+	@Override
+	public Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file) throws StoreFlexServiceException, IOException {
+		log.info("Starting method getWarehouseSearch", this);
+		Warehouse warehouse =null;
+		  Optional<Warehouse> warehouseOpt= warehouseRepository.findById(warehouseId);
+		     if(warehouseOpt.isPresent()) {
+		    	  warehouse =  warehouseOpt.get();
+		    	 warehouse.setProfilePhotoName(file.getOriginalFilename());
+		    	 warehouse.setProfilePhoto(ImageUtility.compressImage(file.getBytes()));
+		    	 warehouseRepository.save(warehouse);
+		     }
+		return warehouse;
+	}
+
+
+	@Override
+	public Map<String, Boolean> deleteWarehouseById(String warehouseId) throws StoreFlexServiceException {
+		log.info("Starting method getWarehouseSearch", this);
+		 Map<String, Boolean> response = new HashMap<>();
+		 Warehouse warehouse =null;
+		 Optional<Warehouse> warehouseOpt = warehouseRepository.findById(warehouseId);
+		 if(warehouseOpt.isPresent()) {
+			 warehouse= warehouseOpt.get();
+			 warehouse.setStatus(false);
+			 warehouse.setUpdateDate(LocalDateTime.now());
+			 warehouse.setUpdatedBy("ADMIN");
+			 warehouseRepository.save(warehouse);
+			 response.put("deleted", Boolean.TRUE);
+		 }else {
+			 response.put("deleted", Boolean.FALSE); 
+		 }
+		return response;
 	}
 }
