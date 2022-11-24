@@ -185,6 +185,33 @@ public class StoreFlexClientController {
 		
 	}
 	
+	@GetMapping(value="/clientDropList" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value="clientDropList" , notes ="Client Id and client name for drop down list" , nickname="clientDropList")
+	public StoreFlexResponse<Object> clientDropList(){
+		log.info("Starting method clientDropList", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Map<String, String> mapList = null;
+		try {
+			 mapList = service.clientDropList();
+		 	 if(null!=mapList) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMethodReturnValue(mapList);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("No Records Found");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		log.info("End method clientDropList", this);
+		return response;
+	}
+	
 	@PostMapping(value="/clientUpdate" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="clientUpdate" , notes ="Update Client Profile" , nickname="clientUpdate")
 	public StoreFlexResponse<Object> clientUpdate(@Validated @RequestBody StoreFlexClientBean request){

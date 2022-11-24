@@ -33,6 +33,8 @@ public interface StoreFlexClientDao {
 
 	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 
+	Map<String, String> clientDropList()throws StoreFlexServiceException;
+
 	
 
 }
