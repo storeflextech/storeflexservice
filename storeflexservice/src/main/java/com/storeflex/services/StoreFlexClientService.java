@@ -32,4 +32,6 @@ public interface StoreFlexClientService {
 	Object uploadClientProfilePic(String clientId, MultipartFile file)throws StoreFlexServiceException, IOException;
 
 	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
+
+	Map<String, String> clientDropList()throws StoreFlexServiceException;;
 }

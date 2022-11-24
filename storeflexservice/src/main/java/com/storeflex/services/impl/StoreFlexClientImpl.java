@@ -92,4 +92,11 @@ public class StoreFlexClientImpl implements StoreFlexClientService{
 		 return dao.deleteClientById(clientId);
 	}
 
+	@Override
+	@Transactional
+	public Map<String, String> clientDropList() throws StoreFlexServiceException {
+		 log.info("Starting method clientDropList", this);
+		 return dao.clientDropList();
+	}
+
 }
