@@ -1,6 +1,7 @@
 package com.storeflex.services;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
@@ -33,5 +34,5 @@ public interface StoreFlexClientService {
 
 	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 
-	Map<String, String> clientDropList()throws StoreFlexServiceException;;
+	List<Map> clientDropList()throws StoreFlexServiceException;;
 }

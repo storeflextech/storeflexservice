@@ -190,7 +190,7 @@ public class StoreFlexClientController {
 	public StoreFlexResponse<Object> clientDropList(){
 		log.info("Starting method clientDropList", this);
 		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		Map<String, String> mapList = null;
+		List<Map>  mapList = null;
 		try {
 			 mapList = service.clientDropList();
 		 	 if(null!=mapList) {
