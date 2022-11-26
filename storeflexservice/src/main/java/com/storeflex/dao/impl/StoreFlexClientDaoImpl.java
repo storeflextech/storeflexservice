@@ -242,14 +242,16 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 	}
 
 	@Override
-	public Map<String, String> clientDropList() throws StoreFlexServiceException {
+	public List<Map> clientDropList() throws StoreFlexServiceException {
 		 log.info("Starting method clientDropList", this);
 		 List<ClientProfile> clientProfileList = storeFlexClientRepository.findAll();
-		 HashMap<String, String> map = new HashMap<String,String>();
+		 List<Map> list = new ArrayList<Map>();
 		 for(ClientProfile client :clientProfileList) {
+			 HashMap<String, String> map = new HashMap<String,String>();
 			 map.put(client.getClientId(), client.getCompyName());
+			 list.add(map);
 		 }
-		return map;
+		return list;
 	}
 
 }

@@ -1,9 +1,11 @@
 package com.storeflex.dao.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -188,13 +190,15 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 	@Override
 	public Object getCity(String stateCode) throws StoreFlexServiceException {
 		log.info("Start method getCity", this);
-		HashMap<String,String> cityMap =  new HashMap<String,String>();
+		List<Map> list =  new ArrayList<Map>();
 		List<City> cityList= cityRepository.getCityByStateId(stateCode);
 		if(!CollectionUtils.isEmpty(cityList)) {
 			for(City city:cityList) {
+				HashMap<String,String> cityMap =  new HashMap<String,String>();
 				cityMap.put(city.getCityCode(), city.getCityName());
+				list.add(cityMap);
 			}
-			return cityMap;
+			return list;
 		}
 		return null;
 	}
@@ -202,13 +206,15 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 	@Override
 	public Object getState(String countyCode) throws StoreFlexServiceException {
 		log.info("Start method getState", this);
-		HashMap<String,String> stateMap =  new HashMap<String,String>();
+		List<Map> list =  new ArrayList<Map>();
 	    List<State> stateList= stateRepository.getStateByCountryId(Long.parseLong(countyCode));
 		if(!CollectionUtils.isEmpty(stateList)) {
 			for(State state:stateList) {
+				HashMap<String,String> stateMap =  new HashMap<String,String>();
 				stateMap.put(state.getStateCode(), state.getStateName());
+				list.add(stateMap);
 			}
-			return stateMap;
+			return list;
 		}
 		return null;
 	}

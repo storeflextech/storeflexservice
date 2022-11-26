@@ -1,6 +1,7 @@
 package com.storeflex.services.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
@@ -94,7 +95,7 @@ public class StoreFlexClientImpl implements StoreFlexClientService{
 
 	@Override
 	@Transactional
-	public Map<String, String> clientDropList() throws StoreFlexServiceException {
+	public List<Map>  clientDropList() throws StoreFlexServiceException {
 		 log.info("Starting method clientDropList", this);
 		 return dao.clientDropList();
 	}
