@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.storeflex.beans.LoginBean;
 import com.storeflex.beans.TestAuthBean;
 import com.storeflex.config.AppConfiguration;
+import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.response.StoreFlexResponse;
 import com.storeflex.response.StoreFlexResponse.Status;
+import com.storeflex.services.StoreFlexAuthService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -27,7 +29,8 @@ public class StoreflexAuthController {
 	AppConfiguration config;
 	@Autowired
 	LoginBean loginBean;
-	
+	@Autowired
+	StoreFlexAuthService service;
 	
 	@PostMapping(value = "/logintest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "logintest", notes = "logintest test , passed username and password", nickname = "logintest")
@@ -80,4 +83,31 @@ public class StoreflexAuthController {
 		return response;
 	}
 
+	
+	@PostMapping(value = "/sllogin", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "sllogin", notes = "Storeflex sllogin  , passed username and password", nickname = "sllogin")
+	public StoreFlexResponse<Object> sllogin(@Validated @RequestBody TestAuthBean bean){
+		log.info("Starting method testLogin", this);	
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Object object=null;
+		try {
+			object=service.sllogin(bean);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("Login Success");
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		return response;
+	}
 }

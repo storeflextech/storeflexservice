@@ -162,7 +162,7 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 				users.setState(req.getState());
 				users.setCountry(req.getCountry());
 				users.setPinCode(req.getPincode());
-				users.setStatus(req.getState());
+				users.setStatus("ACTIVE");
 				users.setStoreflex(storeflex);
 				users=storeFlexUserRespository.saveAndFlush(users);
 				users.setUserId(users.getUserId());
