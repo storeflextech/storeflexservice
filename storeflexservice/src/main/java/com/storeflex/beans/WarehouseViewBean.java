@@ -28,6 +28,10 @@ public class WarehouseViewBean implements Serializable{
 	@JsonInclude(JsonInclude.Include.NON_NULL)
     private String warehouseName;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String profilePicName;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private byte[] profilePic;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
     private String descp;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime createdBy;

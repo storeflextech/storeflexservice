@@ -252,6 +252,40 @@ public class StoreFlexWarehouseController {
 		return response;
 	}
 	
+	@GetMapping(value = "/warehouses", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "warehouses", notes = "get all warehouses", nickname = "warehouses")
+	public StoreFlexResponse<WarehouseViewBeanList> getAllWarehouses(
+			@RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "3") int size){
+		log.info("Starting method wareHouse", this);
+		StoreFlexResponse<WarehouseViewBeanList> response = new StoreFlexResponse<WarehouseViewBeanList>();
+		try {
+			WarehouseViewBeanList warehouseViewBeanList = service.getAllWarehouses(page,size);
+			if (null != warehouseViewBeanList && null!=warehouseViewBeanList.getWarehouseViewBean() && warehouseViewBeanList.getWarehouseViewBean().size()>0) {
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMethodReturnValue(warehouseViewBeanList);
+			}else
+			if(!StringUtils.isEmpty(warehouseViewBeanList.getErrorCode().getErrorCode())) {
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMethodReturnValue(warehouseViewBeanList);	
+			}
+			else {
+				response.setStatus(Status.BUSENESS_ERROR);
+				response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+				response.setMessage("System Error....");
+			}
+			
+		}
+		catch(StoreFlexServiceException e) {
+			response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+			response.setMessage("System Error...." + e.getMessage());
+		}
+		
+		return response;
+	}
 	
 	@GetMapping(value = "/searchwarehouse", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "searchwarehouse", notes = "Search waharehouse", nickname = "searchwarehouse")
