@@ -29,7 +29,6 @@ spring:
     multipart:
       max-file-size: 500KB
       max-request-size: 500KB
-      
 
 testuser:
    username_temp: storeflextest
@@ -39,4 +38,11 @@ testuser:
    username_CL: storeflextest_CL
    password_CL: storeflex#123 
    username_CU: storeflextest_CU
-   password_CU: storeflex#123 
+   password_CU: storeflex#123
+
+#JWT TOKEN    
+jwt:
+ secret: javainuse
+ get:
+  token:
+   uri:/authenticate

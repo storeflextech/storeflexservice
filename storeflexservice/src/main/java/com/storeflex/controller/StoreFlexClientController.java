@@ -69,7 +69,6 @@ public class StoreFlexClientController {
 		}
 		log.info("End method storeFlexClient", this);
 		return response;
-		
 	}
 	
 	@PostMapping(value="/uploadClientProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)

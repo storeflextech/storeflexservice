@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,8 +32,6 @@ public class StoreFlexUsers  implements Serializable{
 	@Column(name="users_id" ,nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID userId;	
-	@Column(name="pwsd")
-	private String pwd;
 	@Column(name="first_name")
 	private String firstName;
 	@Column(name="middle_name")
@@ -64,6 +63,9 @@ public class StoreFlexUsers  implements Serializable{
 	@Column(name="roletype")
 	private String roleType;
 	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reg_id")
+	private UsersReg userReg;
 	
 	@ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name="storeflex_id")

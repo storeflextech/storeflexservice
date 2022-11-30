@@ -13,7 +13,7 @@ public Object createStoreFlex(StoreFlexBean storeFlexBean) throws StoreFlexServi
 
 public Object getStoreFlexCompyDetails()throws StoreFlexServiceException;
 
-public Object storeFlexUser(StoreFlexUserBean req, String roleType, String compyCode)throws StoreFlexServiceException;
+public Object storeFlexUser(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 
 public Object uploaduserpic(String userid, MultipartFile file)throws StoreFlexServiceException, IOException;
 
@@ -22,4 +22,6 @@ public Object getCity(String stateId)throws StoreFlexServiceException;
 public Object getState(String countyId)throws StoreFlexServiceException;
 
 public Object getRoles()throws StoreFlexServiceException;
+
+public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 }

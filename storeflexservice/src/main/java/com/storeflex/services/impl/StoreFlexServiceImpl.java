@@ -35,11 +35,19 @@ public class StoreFlexServiceImpl implements StoreFlexService{
 	}
 	@Override
 	@Transactional
-	public Object storeFlexUser(StoreFlexUserBean req, String roleType, String compyCode)
+	public Object storeFlexUser(StoreFlexUserBean req, String roleType)
 			throws StoreFlexServiceException {
 		 log.info("Starting method storeFlexUser", this);
-		return storeFlexDao.storeFlexUser(req,roleType,compyCode);
+		return storeFlexDao.storeFlexUser(req,roleType);
 	}
+	
+	@Override
+	@Transactional
+	public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType) throws StoreFlexServiceException {
+		log.info("Starting method storeFlexUserFinalize", this);
+		return storeFlexDao.storeFlexUserFinalize(req,roleType);
+	}
+	
 	@Override
 	@Transactional
 	public Object uploaduserpic(String userid, MultipartFile file) throws StoreFlexServiceException, IOException {

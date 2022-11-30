@@ -14,7 +14,7 @@ public interface StoreFlexDao {
 
 	Object getStoreFlexCompyDetails()throws StoreFlexServiceException;
 
-	Object storeFlexUser(StoreFlexUserBean req, String roleType, String compyCode)throws StoreFlexServiceException;
+	Object storeFlexUser(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 
 	Object uploaduserpic(String userid,MultipartFile file)throws StoreFlexServiceException, IOException;
 
@@ -23,5 +23,7 @@ public interface StoreFlexDao {
 	Object getState(String countyId)throws StoreFlexServiceException;
 
 	Object getRoles()throws StoreFlexServiceException;
+
+	Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 
 }

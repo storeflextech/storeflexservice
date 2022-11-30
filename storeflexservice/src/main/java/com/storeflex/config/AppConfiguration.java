@@ -1,5 +1,7 @@
 package com.storeflex.config;
 
+import java.io.Serializable;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -14,8 +16,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @Configuration
 @Component
-public class AppConfiguration {
-	
+public class AppConfiguration implements Serializable{
+	private static final long serialVersionUID = -2550185165626007488L;
+
 	@Value("${testuser.username_temp}")
 	private String test_user;
 	@Value("${testuser.password_temp}")
@@ -32,5 +35,7 @@ public class AppConfiguration {
 	private String cust_user;
 	@Value("${testuser.password_CU}")
 	private String cust_password;
+	@Value("${jwt.secret}")
+	private String secret;
 
 }

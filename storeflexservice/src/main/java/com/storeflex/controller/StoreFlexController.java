@@ -103,20 +103,29 @@ public class StoreFlexController {
 	 
 	 @PostMapping(value="/storeflexuser" ,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflexuser" , notes ="Create Store flex users" , nickname="storeflexuser")
-	 public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType,@RequestParam String compyCode){
+	 public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType){
 		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
 		 Object object;
 		 try {
-				object = service.storeFlexUser(req,roleType,compyCode); 
-				 if(null!=object) {
-					 response.setStatus(Status.SUCCESS);
-					 response.setStatusCode(Status.SUCCESS.getCode());
-					 response.setMethodReturnValue(object);
-				 }else {
+				object = service.storeFlexUser(req,roleType);
+				if(null!=object) {
+					object = service.storeFlexUserFinalize(req,roleType);
+					if(null!=object) {
+						 response.setStatus(Status.SUCCESS);
+						 response.setStatusCode(Status.SUCCESS.getCode());
+						 response.setMethodReturnValue(object);
+					 }else {
+						 response.setStatus(Status.BUSENESS_ERROR);
+						 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+						 response.setMessage("System Error....");
+					 }
+				}else {
 					 response.setStatus(Status.BUSENESS_ERROR);
 					 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-					 response.setMessage("System Error....");
-				 }
+					 response.setMessage("StoreFlex User Registration failure");
+				}
+				
+				 
 			} catch (StoreFlexServiceException e) {
 				 response.setStatus(Status.BUSENESS_ERROR);
 				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
@@ -136,7 +145,7 @@ public class StoreFlexController {
 				 if(null!=object) {
 					 response.setStatus(Status.SUCCESS);
 					 response.setStatusCode(Status.SUCCESS.getCode());
-					 response.setMethodReturnValue(object);
+					 response.setMessage("Successfully Uploaded");
 				 }else {
 					 response.setStatus(Status.BUSENESS_ERROR);
 					 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
