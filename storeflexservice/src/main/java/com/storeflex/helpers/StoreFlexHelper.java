@@ -1,18 +1,35 @@
 package com.storeflex.helpers;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.storeflex.beans.CustEnquiryBean;
 import com.storeflex.beans.StoreFlexAddressBean;
 import com.storeflex.beans.StoreFlexBean;
 import com.storeflex.beans.StoreFlexContactBean;
+import com.storeflex.config.AppConfiguration;
 import com.storeflex.entities.StoreFlex;
 import com.storeflex.entities.StoreFlexAddress;
 import com.storeflex.entities.StoreFlexContact;
@@ -22,6 +39,15 @@ import com.storeflex.entities.UniqueId;
 @Component
 public class StoreFlexHelper {
 	private static final Logger log = LoggerFactory.getLogger(StoreFlexHelper.class);
+	
+	@Autowired
+	AppConfiguration config;
+	
+	@Autowired(required=true)
+	JavaMailSender javaMailSender;
+	
+	@Autowired
+	AppConfiguration appConfig;
 	
 	public StoreFlex createStoreFlex(UniqueId uniqueId,StoreFlexBean storeFlexBean,StoreFlex storeFlex) {
 		 log.info("Start method createStoreFlex", this);
@@ -115,5 +141,48 @@ public class StoreFlexHelper {
 			}
 			return null;
 	}
+
+	public void enquiryMail(CustEnquiryBean bean) throws MessagingException, IOException {
+		log.info("Start method enquiryMail", this);
+		 sendEmail(bean);
+	}
+	
+	void sendEmail(CustEnquiryBean bean) throws AddressException, MessagingException, IOException {
+		log.info("Start method sendEmail", this);
+		Properties props = new Properties();
+		   props.put("mail.smtp.auth", appConfig.isAuth());
+		   props.put("mail.smtp.starttls.enable", appConfig.isEnable());
+		   props.put("mail.smtp.host", appConfig.getMailHost());
+		   props.put("mail.smtp.port", "587");
+		   Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			      protected PasswordAuthentication getPasswordAuthentication() {
+			         return new PasswordAuthentication(appConfig.getMailUser(), appConfig.getMailUserPsw());
+			      }
+			   });
+		   
+		   Message msg = new MimeMessage(session);
+		   msg.setFrom(new InternetAddress(appConfig.getMailUser(), false));
+
+		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(bean.getEmail()));
+		   msg.setSubject("STOREFLEX EQUIRY-" +bean.getFirstName());
+		   msg.setContent("Thanks for connecting with us <b>"+bean.getFirstName()+". We can help on your enquiry", "text/html");
+		   msg.setSentDate(new Date());
+
+		  /* MimeBodyPart messageBodyPart = new MimeBodyPart();
+		   messageBodyPart.setContent("Thanks for connecting with us <b>"+bean.getFirstName()+". We can help on your enquiry", "text/html");
+
+		   Multipart multipart = new MimeMultipart();
+		   multipart.addBodyPart(messageBodyPart);
+		   MimeBodyPart attachPart = new MimeBodyPart();
+
+		   attachPart.attachFile("/var/tmp/image19.png");
+		   multipart.addBodyPart(attachPart);
+		   msg.setContent(multipart);*/
+		   Transport.send(msg);  
+		   
+       
+        log.info("End method sendEmail", this);
+
+    }
 
 }

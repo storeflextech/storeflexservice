@@ -37,5 +37,26 @@ public class AppConfiguration implements Serializable{
 	private String cust_password;
 	@Value("${jwt.secret}")
 	private String secret;
-
+	
+	@Value("${spring.mail.host}")
+	private String mailHost;
+	@Value("${spring.mail.username}")
+	private String mailHostUser;
+	@Value("${spring.mail.password}")
+	private String mailHostPsd;
+	@Value("${spring.mail.properties.mail.smtp.auth}")
+	private boolean auth;
+	@Value("${spring.mail.properties.mail.smtp.connectiontimeout}")
+	private long connectiontimeout;
+	@Value("${spring.mail.properties.mail.smtp.timeout}")
+	private long timeout;
+	@Value("${spring.mail.properties.mail.smtp.writetimeout}")
+	private long writetimeout;
+	@Value("${spring.mail.properties.mail.starttls.enable}")
+	private boolean enable;
+	@Value("${spring.mail.username}")
+	private String mailUser;
+	@Value("${spring.mail.password}")
+	private String mailUserPsw;
+	
 }
