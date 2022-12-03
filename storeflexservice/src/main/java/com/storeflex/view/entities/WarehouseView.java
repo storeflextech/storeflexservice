@@ -31,6 +31,10 @@ public class WarehouseView implements Serializable{
     private String clientId;
 	@Column(name = "warehouse_name")
     private String warehouseName;
+	@Column(name = "warehouse_profile_photo_name")
+	private String profilePicName;
+	@Column(name = "warehouse_profile_photo")
+	private byte[] profilePic;
 	@Column(name = "warehouse_descp")
     private String descp;
 	@Column(name = "created_by")

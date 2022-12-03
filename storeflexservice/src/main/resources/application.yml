@@ -6,7 +6,23 @@ server:
     context-path: /storeflexservice
  
 spring:
-########Data source ##############            
+
+  ##### GMAIL SMTP SERVER####  
+  mail:
+   host: smtp.gmail.com
+   port: 587
+   username: storeflexsl@gmail.com
+   password: jgqzygjfoalyzzbj
+   properties:
+    mail:
+     smtp:
+      auth: true
+      connectiontimeout: 5000
+      timeout: 5000
+      writetimeout: 5000
+     starttls:
+      enable: true
+ ########Data source ##############         
   datasource:
     url: jdbc:postgresql://storeflex.cdnznk1rek3c.ap-south-1.rds.amazonaws.com:5432/storeFlexDevDB
     username: StoreFDev
@@ -29,7 +45,6 @@ spring:
     multipart:
       max-file-size: 500KB
       max-request-size: 500KB
-      
 
 testuser:
    username_temp: storeflextest
@@ -39,4 +54,12 @@ testuser:
    username_CL: storeflextest_CL
    password_CL: storeflex#123 
    username_CU: storeflextest_CU
-   password_CU: storeflex#123 
+   password_CU: storeflex#123
+
+#JWT TOKEN    
+jwt:
+ secret: javainuse
+ get:
+  token:
+   uri:/authenticate
+

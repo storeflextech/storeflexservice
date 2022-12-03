@@ -37,6 +37,11 @@ public class ClientUsers  implements Serializable{
 	private String middleName;
 	@Column(name = "last_name")
 	private String lastName;
+	@Column(name="user_phto")
+	private byte[] userPhoto;
+	@Column(name="phto_name")
+	private String photoName;
+	
 	@Column(name = "address")
 	private String address;
 	@Column(name = "house_no")

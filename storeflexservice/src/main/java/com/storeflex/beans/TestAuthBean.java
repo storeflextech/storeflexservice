@@ -20,6 +20,8 @@ public class TestAuthBean implements Serializable{
 	
 	private String username;
 	
+	private String emailId;
+	
 	private String password;
 
 }

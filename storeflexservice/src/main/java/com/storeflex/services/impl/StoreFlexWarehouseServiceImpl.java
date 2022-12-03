@@ -88,4 +88,11 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 		return dao.deleteWarehouseById(warehouseId);
 	}
 
+	@Override
+	@Transactional
+	public WarehouseViewBeanList getAllWarehouses(int page, int size) throws StoreFlexServiceException {
+		log.info("Starting method getAllWarehouses", this);
+		return dao.getAllWarehouses(page,size);
+	}
+
 }

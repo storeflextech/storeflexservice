@@ -334,6 +334,8 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 						WarehouseViewBean viewbean = new WarehouseViewBean();
 						viewbean.setWarehouseId(view.getWarehouseId());
 						viewbean.setWarehouseName(view.getWarehouseName());
+						viewbean.setProfilePicName(view.getProfilePicName());
+						viewbean.setProfilePic(view.getProfilePic());
 						viewbean.setClientId(view.getClientId());
 						viewbean.setDescp(view.getDescp());
 						viewbean.setHouseNo(view.getHouseNo());
@@ -388,5 +390,53 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 			 response.put("deleted", Boolean.FALSE); 
 		 }
 		return response;
+	}
+
+
+	@Override
+	public WarehouseViewBeanList getAllWarehouses(int page, int size) throws StoreFlexServiceException {
+		log.info("Starting method getAllWarehouses", this);
+		ErrorCodeBean errorbean = new ErrorCodeBean();
+		Pageable pageable = PageRequest.of(page, size);
+		Page<WarehouseView> pages = null;
+		List<WarehouseView> list = null;
+		pages = warehouseViewRepository.findAll(pageable);
+		List<WarehouseViewBean> beanList = new ArrayList<WarehouseViewBean>();
+		WarehouseViewBeanList warehouseViewList =  new WarehouseViewBeanList();
+		if (pages != null && pages.getContent() != null) {
+			list = pages.getContent();
+			if (!CollectionUtils.isEmpty(list)) {
+				for (WarehouseView view : list) {
+					WarehouseViewBean viewbean = new WarehouseViewBean();
+					viewbean.setWarehouseId(view.getWarehouseId());
+					viewbean.setWarehouseName(view.getWarehouseName());
+					viewbean.setProfilePicName(view.getProfilePicName());
+					viewbean.setProfilePic(view.getProfilePic());
+					viewbean.setClientId(view.getClientId());
+					viewbean.setDescp(view.getDescp());
+					viewbean.setHouseNo(view.getHouseNo());
+					viewbean.setPlotNo(view.getPlotNo());
+					viewbean.setStreetAddrs(view.getStreetAddrs());
+					viewbean.setCity(view.getCity());
+					viewbean.setState(view.getState());
+					viewbean.setPincode(view.getPincode());
+					viewbean.setStatus(view.isStatus());
+					beanList.add(viewbean);
+				}
+			}
+			if(!CollectionUtils.isEmpty(beanList)) {
+				warehouseViewList.setWarehouseViewBean(beanList);
+				warehouseViewList.setTotalRecord(pages.getTotalElements());
+			}
+		}else {
+			log.error("No Warehouses found",ErrorCodes.WL_001);
+			errorbean.setErrorCode(ErrorCodes.WL_001);
+			errorbean.setErrorMessage("No Warehouses found");
+			warehouseViewList.setErrorCode(errorbean);
+			return warehouseViewList;
+		}
+		
+		log.info("End method getAllWarehouses", this);
+		return warehouseViewList;
 	}
 }

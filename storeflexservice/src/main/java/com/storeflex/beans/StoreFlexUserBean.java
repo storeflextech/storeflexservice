@@ -54,6 +54,10 @@ public class StoreFlexUserBean implements Serializable{
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String roleType;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String redirectUrl;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String loginType;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private StoreFlexBean storeFlex;
 	
 

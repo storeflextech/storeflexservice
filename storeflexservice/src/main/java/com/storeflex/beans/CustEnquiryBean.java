@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import javax.persistence.Column;
 
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.EqualsAndHashCode;
@@ -14,41 +16,38 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@Component
 @Setter
 @Getter
 @ToString
-@NoArgsConstructor
 @EqualsAndHashCode
-public class WarehouseViewBean implements Serializable{
-	private static final long serialVersionUID = 9168270119817373255L;
+@NoArgsConstructor
+public class CustEnquiryBean implements Serializable{
+	private static final long serialVersionUID = 1L;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private String warehouseId;
+	private UUID enquiryId;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String clientId;
+	private String firstName;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String warehouseName;
+	private String middleName;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private String profilePicName;
+	private String lastName;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private byte[] profilePic;
+	private String email;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String descp;
+	private String mobileNo;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private LocalDateTime createdBy;
+	private String subject;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private LocalDateTime createdTime;
+	private String descp;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private boolean status;
+	private String createBy;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String houseNo;
+	@JsonFormat(pattern="yyyy-MM-dd")
+	private LocalDateTime createDate;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String plotNo;
+	private String updateBy;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String streetAddrs;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String city;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String state;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private String pincode;
+	@JsonFormat(pattern="yyyy-MM-dd")
+	private LocalDateTime updateDate;
 }
