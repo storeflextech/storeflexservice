@@ -1,6 +1,7 @@
 package com.storeflex.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,6 +63,14 @@ public class StoreFlexUsers  implements Serializable{
 	private String status;
 	@Column(name="roletype")
 	private String roleType;
+	@Column(name="created_by" )
+	private String createBy;
+	@Column(name="created_date" )
+	private LocalDateTime createDate;
+	@Column(name="update_by" )
+	private String updatedBy;
+	@Column(name="update_date" )
+	private LocalDateTime updateDate;
 	
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reg_id")
