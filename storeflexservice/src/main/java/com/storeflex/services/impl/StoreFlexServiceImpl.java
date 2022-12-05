@@ -79,6 +79,11 @@ public class StoreFlexServiceImpl implements StoreFlexService{
 		 log.info("Starting method getStoreFlexUsersDetails", this);
 		return storeFlexDao.getStoreFlexUsersDetails(paging);
 	}
+	@Override
+	public Object getStoreFlexUserId(String userid) throws StoreFlexServiceException {
+		 log.info("Starting method getStoreFlexUserId", this);
+		return storeFlexDao.getStoreFlexUserId(userid);
+	}
 	
 	 
 }

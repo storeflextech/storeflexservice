@@ -29,4 +29,6 @@ public interface StoreFlexDao {
 
 	Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
 
+	Object getStoreFlexUserId(String userid)throws StoreFlexServiceException;
+
 }

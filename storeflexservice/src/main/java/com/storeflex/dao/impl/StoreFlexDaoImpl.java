@@ -186,6 +186,13 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 			if(storeOp.isPresent()) {
 				UsersReg usersReg =  userAuthRepository.searchEmailExist(req.getEmail());
 				StoreFlex storeflex = storeOp.get();
+				if(null==req.getUserId()) {
+					users.setCreateBy("ADMIN");
+					users.setCreateDate(LocalDateTime.now());
+				}else {
+					users.setUpdatedBy("ADMIN");
+					users.setUpdateDate(LocalDateTime.now());
+				}
 				users.setFirstName(req.getFirstName());
 				users.setMiddleName(req.getMiddleName());
 				users.setLastName(req.getLastName());
@@ -206,9 +213,16 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 				users=storeFlexUserRespository.saveAndFlush(users);
 				users.setUserId(users.getUserId());
 			}else {
-				error.setErrorCode(ErrorCodes.USER_NOT_REGISTER);
-				error.setErrorMessage("Registration issue on storeflex system1");
-				return error;
+				if(null==req.getUserId()) {
+					error.setErrorCode(ErrorCodes.USER_NOT_REGISTER);
+					error.setErrorMessage("Registration issue on storeflex system1");
+					return error;
+				}else {
+					error.setErrorCode(ErrorCodes.USER_RECORDS_NOT_UPDATED);
+					error.setErrorMessage("User records not updates "+ErrorCodes.USER_RECORDS_NOT_UPDATED);
+					return error;
+				}
+				
 			}
 		return users;
 		}
@@ -302,6 +316,39 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 		 }
 		return userList;
 	}
+
+	@Override
+	public Object getStoreFlexUserId(String userid) throws StoreFlexServiceException {
+		log.info("Start method getStoreFlexUserId", this);
+	    Optional<StoreFlexUsers> storeFlexUserOpt= storeFlexUserRespository.findById(UUID.fromString(userid));
+	    ErrorCodeBean error = new ErrorCodeBean();
+	    if(storeFlexUserOpt.isPresent()) {
+	    	StoreFlexUsers user =storeFlexUserOpt.get();
+	    	StoreFlexUserBean userBean =  new StoreFlexUserBean();
+	    	userBean.setUserId(userBean.getUserId());
+			 userBean.setFirstName(user.getFirstName());
+			 userBean.setMiddleName(user.getMiddleName());
+			 userBean.setLastName(user.getLastName());
+			 userBean.setEmail(user.getEmail());
+			 userBean.setMobileNo(user.getMobileNo());
+			 userBean.setPhotoName(user.getPhotoName());
+			 userBean.setUserPhoto(user.getUserPhoto());
+			 userBean.setHouseNo(user.getHouseNo());
+			 userBean.setAddress(user.getAddress());
+			 userBean.setCity(user.getCity());
+			 userBean.setCountry(user.getCountry());
+			 userBean.setPincode(user.getPinCode());
+			 userBean.setRoleType(user.getRoleType());
+			 userBean.setStatus(user.getStatus());
+			 log.info("End method getStoreFlexUserId", this);
+			 return userBean;
+	    }else {
+	    	log.info("Error on method getStoreFlexUserId"+ErrorCodes.USER_NOT_REGISTER, this);
+	    	error.setErrorCode(ErrorCodes.USER_NOT_REGISTER);
+	    	error.setErrorMessage("User not exist on Storeflex System"+ErrorCodes.USER_NOT_REGISTER);
+	    	return error;
+	    }
+		}
 
 	
 }

@@ -14,4 +14,5 @@ public class StoreFlexConstants {
 	public static final String APPROVE_STATUS = "APPROVED";
 	public static final String ACTIVE_STATUS = "ACTIVE";
 	public static final String SL_USER = "SL";
+	
 }

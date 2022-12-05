@@ -133,31 +133,61 @@ public class StoreFlexController {
 		return response;
 	 }
 	 
+	 @GetMapping(value="/storeflexuser" ,produces = MediaType.APPLICATION_JSON_VALUE)
+	 @ApiOperation(value="storeflex" , notes ="Get Store flex User details by Id " , nickname="storeflex")
+	 public  StoreFlexResponse<Object> getStoreFlexUserId(
+			 @RequestParam String userid
+		     ){
+		 log.info("Starting method getStoreFlexUsers", this);
+		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		 Object object;
+		 try {
+				object = service.getStoreFlexUserId(userid);
+				 if(null!=object) {
+					 response.setStatus(Status.SUCCESS);
+					 response.setStatusCode(Status.SUCCESS.getCode());
+					 response.setMethodReturnValue(object);
+				 }else {
+					 response.setStatus(Status.BUSENESS_ERROR);
+					 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+					 response.setMessage("System Error....");
+				 }
+			} catch (StoreFlexServiceException e) {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error...."+e.getMessage());
+			}
+		 log.info("End method getStoreFlexUserId", this);
+		return response;
+	 }
+	 
 	 @PostMapping(value="/storeflexuser" ,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflexuser" , notes ="Create Store flex users" , nickname="storeflexuser")
 	 public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType){
 		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
 		 Object object;
 		 try {
-				object = service.storeFlexUser(req,roleType);
-				if(null!=object) {
-					object = service.storeFlexUserFinalize(req,roleType);
+			 if(null==req.getUserId()) {//new user
+				 object = service.storeFlexUser(req,roleType);
 					if(null!=object) {
-						 response.setStatus(Status.SUCCESS);
-						 response.setStatusCode(Status.SUCCESS.getCode());
-						 response.setMethodReturnValue(object);
-					 }else {
+						object = service.storeFlexUserFinalize(req,roleType);
+						if(null!=object) {
+							 response.setStatus(Status.SUCCESS);
+							 response.setStatusCode(Status.SUCCESS.getCode());
+							 response.setMethodReturnValue(object);
+						 }else {
+							 response.setStatus(Status.BUSENESS_ERROR);
+							 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+							 response.setMessage("System Error....");
+						 }
+					}else {
 						 response.setStatus(Status.BUSENESS_ERROR);
 						 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-						 response.setMessage("System Error....");
-					 }
-				}else {
-					 response.setStatus(Status.BUSENESS_ERROR);
-					 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-					 response.setMessage("StoreFlex User Registration failure");
-				}
-				
-				 
+						 response.setMessage("StoreFlex User Registration failure");
+					} 
+			 }else {
+				 object = service.storeFlexUserFinalize(req,roleType);
+			 }
 			} catch (StoreFlexServiceException e) {
 				 response.setStatus(Status.BUSENESS_ERROR);
 				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 

@@ -27,4 +27,6 @@ public Object getRoles()throws StoreFlexServiceException;
 public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 
 public Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
+
+public Object getStoreFlexUserId(String userid)throws StoreFlexServiceException;
 }
