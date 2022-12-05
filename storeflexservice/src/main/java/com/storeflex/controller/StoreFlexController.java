@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -99,6 +101,36 @@ public class StoreFlexController {
 			}
 			
 			 return response;
+	 }
+	 
+	 @GetMapping(value="/storeflexusers" ,produces = MediaType.APPLICATION_JSON_VALUE)
+	 @ApiOperation(value="storeflex" , notes ="Get Store flex Users list details" , nickname="storeflex")
+	 public  StoreFlexResponse<Object> getStoreFlexUsers(
+			 @RequestParam(defaultValue = "0") int page,
+		     @RequestParam(defaultValue = "3") int size
+			 ){
+		 log.info("Starting method getStoreFlexUsers", this);
+		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		 Object object;
+		 Pageable paging = PageRequest.of(page, size);
+		 try {
+				object = service.getStoreFlexUsersDetails(paging);
+				 if(null!=object) {
+					 response.setStatus(Status.SUCCESS);
+					 response.setStatusCode(Status.SUCCESS.getCode());
+					 response.setMethodReturnValue(object);
+				 }else {
+					 response.setStatus(Status.BUSENESS_ERROR);
+					 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+					 response.setMessage("System Error....");
+				 }
+			} catch (StoreFlexServiceException e) {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error...."+e.getMessage());
+			}
+		 log.info("End method getStoreFlexUsers", this);
+		return response;
 	 }
 	 
 	 @PostMapping(value="/storeflexuser" ,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)

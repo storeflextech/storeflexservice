@@ -364,7 +364,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 		Warehouse warehouse =null;
 		  Optional<Warehouse> warehouseOpt= warehouseRepository.findById(warehouseId);
 		     if(warehouseOpt.isPresent()) {
-		    	  warehouse =  warehouseOpt.get();
+		    	 warehouse =  warehouseOpt.get();
 		    	 warehouse.setProfilePhotoName(file.getOriginalFilename());
 		    	 warehouse.setProfilePhoto(ImageUtility.compressImage(file.getBytes()));
 		    	 warehouseRepository.save(warehouse);

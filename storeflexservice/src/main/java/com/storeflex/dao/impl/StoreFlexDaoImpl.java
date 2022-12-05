@@ -14,6 +14,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +37,7 @@ import com.storeflex.entities.StoreFlexContact;
 import com.storeflex.entities.StoreFlexUsers;
 import com.storeflex.entities.UniqueId;
 import com.storeflex.entities.UsersReg;
+import com.storeflex.entities.Warehouse;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.helpers.StoreFlexHelper;
 import com.storeflex.repositories.CityRepository;
@@ -222,7 +225,7 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 		StoreFlexUsers user =null;
 		if(storeFlexUserOp.isPresent()) {
 			user= storeFlexUserOp.get();
-			user.setPhotoName(file.getOriginalFilename()+"."+file.getContentType());
+			user.setPhotoName(file.getOriginalFilename());
 			user.setUserPhoto(ImageUtility.compressImage(file.getBytes()));
 			user=storeFlexUserRespository.saveAndFlush(user);
 		}
@@ -270,6 +273,34 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 			roleMap.put(role.getRoleId(), role.getRoleType());
 		}
 		return roleMap;
+	}
+
+	@Override
+	public Object getStoreFlexUsersDetails(Pageable paging) throws StoreFlexServiceException {
+		log.info("Start method getStoreFlexUsersDetails", this);
+		 Page<StoreFlexUsers> storeFlexUserList =	storeFlexUserRespository.findAll(paging);
+		 List<StoreFlexUserBean> userList =  new ArrayList<StoreFlexUserBean>();
+		 for(StoreFlexUsers user : storeFlexUserList) {
+			 StoreFlexUserBean userBean =  new StoreFlexUserBean();
+			 userBean.setUserId(userBean.getUserId());
+			 userBean.setFirstName(user.getFirstName());
+			 userBean.setMiddleName(user.getMiddleName());
+			 userBean.setLastName(user.getLastName());
+			 userBean.setEmail(user.getEmail());
+			 userBean.setMobileNo(user.getMobileNo());
+			 userBean.setPhotoName(user.getPhotoName());
+			 userBean.setUserPhoto(user.getUserPhoto());
+			 userBean.setHouseNo(user.getHouseNo());
+			 userBean.setAddress(user.getAddress());
+			 userBean.setCity(user.getCity());
+			 userBean.setCountry(user.getCountry());
+			 userBean.setPincode(user.getPinCode());
+			 userBean.setRoleType(user.getRoleType());
+			 userBean.setStatus(user.getStatus());
+			 userList.add(userBean);
+			
+		 }
+		return userList;
 	}
 
 	
