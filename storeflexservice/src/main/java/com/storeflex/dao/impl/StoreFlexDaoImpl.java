@@ -296,7 +296,7 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 		 List<StoreFlexUserBean> userList =  new ArrayList<StoreFlexUserBean>();
 		 for(StoreFlexUsers user : storeFlexUserList) {
 			 StoreFlexUserBean userBean =  new StoreFlexUserBean();
-			 userBean.setUserId(userBean.getUserId());
+			 userBean.setUserId(user.getUserId());
 			 userBean.setFirstName(user.getFirstName());
 			 userBean.setMiddleName(user.getMiddleName());
 			 userBean.setLastName(user.getLastName());
