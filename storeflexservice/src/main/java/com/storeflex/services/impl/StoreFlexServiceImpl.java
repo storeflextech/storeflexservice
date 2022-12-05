@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,6 +72,12 @@ public class StoreFlexServiceImpl implements StoreFlexService{
 	public Object getRoles() throws StoreFlexServiceException {
 		 log.info("Starting method getRoles", this);
 		return storeFlexDao.getRoles();
+	}
+	@Override
+	@Transactional
+	public Object getStoreFlexUsersDetails(Pageable paging) throws StoreFlexServiceException {
+		 log.info("Starting method getStoreFlexUsersDetails", this);
+		return storeFlexDao.getStoreFlexUsersDetails(paging);
 	}
 	
 	 

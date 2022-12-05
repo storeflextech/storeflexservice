@@ -2,6 +2,7 @@ package com.storeflex.dao;
 
 import java.io.IOException;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexBean;
@@ -25,5 +26,7 @@ public interface StoreFlexDao {
 	Object getRoles()throws StoreFlexServiceException;
 
 	Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
+
+	Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
 
 }
