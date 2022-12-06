@@ -58,5 +58,11 @@ public class AppConfiguration implements Serializable{
 	private String mailUser;
 	@Value("${spring.mail.password}")
 	private String mailUserPsw;
-	
+
+	@Value("${signing.zoho.clientID}")
+	private String zohoClientId;
+	@Value("${signing.zoho.clientSecret}")
+	private String zohoClientSecret;
+	@Value("${signing.zoho.refreshToken}")
+	private String zohoRefreshToken;
 }
