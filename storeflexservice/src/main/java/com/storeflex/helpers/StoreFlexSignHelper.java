@@ -11,12 +11,14 @@ import java.net.http.HttpRequest.BodyPublishers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import com.storeflex.beans.StoreFlexClientBean;
+import com.storeflex.config.AppConfiguration;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.services.StoreFlexClientService;
 import com.storeflex.services.StoreFlexClientSignService;
@@ -24,6 +26,9 @@ import com.storeflex.services.StoreFlexClientSignService;
 @Component
 public class StoreFlexSignHelper {
     private static final Logger log = LoggerFactory.getLogger(StoreFlexHelper.class);
+
+    @Autowired
+	AppConfiguration config;
 
     public void sendForSigningToClient(StoreFlexClientService clientService, StoreFlexClientSignService clientSignService, String clientId) throws StoreFlexServiceException, JSONException, UnsupportedEncodingException, IOException, InterruptedException
     {
@@ -51,12 +56,14 @@ public class StoreFlexSignHelper {
 
     private JSONObject sendForSigning(String name, String emailId) throws JSONException, UnsupportedEncodingException, IOException, InterruptedException
     {
+        String accessToken = this.generateAccessToken();
+
         HttpClient client = HttpClient.newHttpClient();
         
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("https://sign.zoho.in/api/v1/templates/34025000000033255/createdocument"))
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .header("Authorization","Zoho-oauthtoken "+ "1000.92117a108bacf69784cef1723e2b9600.7d5007d6a38c28e432fa1092adf582a2")
+            .header("Authorization","Zoho-oauthtoken "+ accessToken)
             .POST(BodyPublishers.ofString("is_quicksend=true&testing=true&data=" + URLEncoder.encode(fillClientTemplate(name, emailId), "UTF-8")))
             .build();
 
@@ -109,6 +116,27 @@ public class StoreFlexSignHelper {
         log.info("Filed Template:", dataJsonAsString);
         
         return dataJsonAsString;
+    }
+
+    private String generateAccessToken() throws IOException, InterruptedException, JSONException
+    {
+        String refreshToken = "refresh_token=" + config.getZohoRefreshToken();
+        String clientId = "&client_id=" + config.getZohoClientId();
+        String clientSecret = "&client_secret=" + config.getZohoClientSecret();
+        String redirectUri = "&redirect_uri=https%3A%2F%2Fsign.zoho.com&grant_type=refresh_token";
+
+        HttpClient client = HttpClient.newHttpClient();
+        
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://accounts.zoho.in/oauth/v2/token?" + refreshToken + clientId + clientSecret + redirectUri))
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+
+        HttpResponse<String> tes = client.send(request, HttpResponse.BodyHandlers.ofString());
+        log.info("Filed Template:", tes.body());
+        JSONObject jObject = new JSONObject(tes.body());
+
+        return jObject.getString("access_token");
     }
     
 }

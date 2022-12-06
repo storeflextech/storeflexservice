@@ -56,6 +56,12 @@ testuser:
    username_CU: storeflextest_CU
    password_CU: storeflex#123
 
+signing:
+  zoho:
+    clientID: 1000.928LQ0H22FF73LRFU7KMF2TXSLPB6Y
+    clientSecret: 19f3573ac7cdf167b54450485f72f8538a5c5a91d6
+    refreshToken: 1000.e2bec535f208502a142d2eb8cdf959e1.18ce2a1018a9f30ab3fdf8d86389c9ee  
+
 #JWT TOKEN    
 jwt:
  secret: javainuse
