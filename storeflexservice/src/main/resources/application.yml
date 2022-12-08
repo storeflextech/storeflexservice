@@ -4,7 +4,28 @@ server:
     8082
   servlet:
     context-path: /storeflexservice
- 
+###cloud credentail to access storeflex AWS##### 
+cloud:
+  aws:
+   region:
+    static:
+    auto: false
+   credentails:
+    access-key: AKIATI22Z2T642TJIFMD
+    secret-key: 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
+    
+### DB details in cloud #########
+postgres:
+ driver: org.postgresql.Driver
+ db: jdbc
+ dbname: storeFlexDevDB
+
+### AWS postgres secret manager details ######### 
+storeflexaws:
+ dbsecret:
+  name: dev/storeflexDB
+  region: ap-south-1
+  
 spring:
 
   ##### GMAIL SMTP SERVER####  
@@ -23,10 +44,10 @@ spring:
      starttls:
       enable: true
  ########Data source ##############         
-  datasource:
-    url: jdbc:postgresql://storeflex.cdnznk1rek3c.ap-south-1.rds.amazonaws.com:5432/storeFlexDevDB
-    username: StoreFDev
-    password: StoreTech2022
+  #datasource:
+    #driver: jdbc:postgresql://storeflex.cdnznk1rek3c.ap-south-1.rds.amazonaws.com:5432/storeFlexDevDB
+    #username: StoreFDev
+    #password: StoreTech2022
   
   jpa:
    properties:
@@ -46,6 +67,7 @@ spring:
       max-file-size: 500KB
       max-request-size: 500KB
 
+####TESTING PURPOSE#####################
 testuser:
    username_temp: storeflextest
    password_temp: storeflex#123
@@ -56,6 +78,7 @@ testuser:
    username_CU: storeflextest_CU
    password_CU: storeflex#123
 
+####StoreFlex ZOHO details ###########
 signing:
   zoho:
     clientID: 1000.928LQ0H22FF73LRFU7KMF2TXSLPB6Y
