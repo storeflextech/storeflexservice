@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import com.storeflex.beans.ClientWareHouseAddrBean;
 import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.ErrorCodeBean;
+import com.storeflex.beans.WarehouseCategoriesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.beans.WarehouseViewBean;
@@ -38,6 +40,9 @@ import com.storeflex.entities.UniqueId;
 import com.storeflex.entities.WareHousePhoto;
 import com.storeflex.entities.Warehouse;
 import com.storeflex.entities.WarehouseAddress;
+import com.storeflex.entities.WarehouseFacilities;
+import com.storeflex.entities.WarehouseIndustries;
+import com.storeflex.entities.WarehouseStorages;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.helpers.StoreFlexHelper;
 import com.storeflex.helpers.StoreFlexWarehouseHelper;
@@ -46,8 +51,11 @@ import com.storeflex.repositories.StateRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
 import com.storeflex.repositories.UniquePrefixRepository;
 import com.storeflex.repositories.WarehouseAddressRepository;
+import com.storeflex.repositories.WarehouseFaciRepository;
+import com.storeflex.repositories.WarehouseIndusRepository;
 import com.storeflex.repositories.WarehousePhotosRepository;
 import com.storeflex.repositories.WarehouseRepository;
+import com.storeflex.repositories.WarehouseStorgRepository;
 import com.storeflex.view.entities.WarehouseView;
 import com.storeflex.view.repositories.WarehouseViewRepository;
 import com.storeflex.utilities.ImageUtility;
@@ -79,6 +87,12 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 	UniquePrefixRepository uniquePrefixRespository;
 	@Autowired
 	SearchSpecification searchSpecification;
+	@Autowired
+	WarehouseIndusRepository warehouseIndusRepository; 
+	@Autowired
+	WarehouseFaciRepository warehouseFaciRepository;
+	@Autowired
+	WarehouseStorgRepository warehouseStorgRepository;
 	@Override
 	public Warehouse createWarehouse(ClientWareHousesBean request) throws StoreFlexServiceException {
 		 log.info("Starting method createWarehouse", this);
@@ -438,5 +452,36 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 		
 		log.info("End method getAllWarehouses", this);
 		return warehouseViewList;
+	}
+
+
+	@Override
+	public WarehouseCategoriesBean getWareshouseCategories() throws StoreFlexServiceException {
+		log.info("Starting method getWareshouseCategories", this);
+		WarehouseCategoriesBean bean = new WarehouseCategoriesBean();
+		Hashtable<String,String> map = new Hashtable<String,String>();
+		Hashtable<String,String> map1 = new Hashtable<String,String>();
+		Hashtable<String,String> map2 = new Hashtable<String,String>();
+		List<WarehouseIndustries> indusList = warehouseIndusRepository.findAll();
+		List<WarehouseStorages>   storageList = warehouseStorgRepository.findAll();
+		List<WarehouseFacilities> faciList = warehouseFaciRepository.findAll();
+		bean.setIndustry("Industries served*");
+		for(WarehouseIndustries indus :indusList) {
+			map.put(indus.getCode(), indus.getNameVal());
+		}
+		bean.setIndustries(map);
+		bean.setStorage("Storage Layouts*");
+		for(WarehouseStorages storage: storageList) {
+			map1.put(storage.getCode(), storage.getNameVal());
+		}
+		bean.setStorages(map1);
+		
+		bean.setFacility("Facility Qualifications*");
+		for(WarehouseFacilities faci: faciList) {
+			map2.put(faci.getCode(), faci.getNameVal());
+		}
+		bean.setFacilities(map2);
+		log.info("End method getWareshouseCategories", this);
+		return bean;
 	}
 }
