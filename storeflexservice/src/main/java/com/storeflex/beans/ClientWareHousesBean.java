@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -46,6 +48,9 @@ public class ClientWareHousesBean implements Serializable{
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDateTime updateDate;
 	private boolean status;
+	private String facilitiesId;
+	private String industryId;
+	private String storagesId;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<ClientWareHouseAddrBean> address ;
 	@JsonInclude(JsonInclude.Include.NON_NULL)

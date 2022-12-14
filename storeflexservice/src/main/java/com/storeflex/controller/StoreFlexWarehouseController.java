@@ -325,7 +325,30 @@ public class StoreFlexWarehouseController {
 		return response;
 	}
 	
-	
+	@GetMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "categories", notes = "List of categoies of warehouse", nickname = "List of categoies of warehouse")
+	public StoreFlexResponse<Object> getWareshouseCategories(){
+		log.info("Starting method getWareshouseCategories", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Object object =null;
+		try {
+			object = service.getWareshouseCategories();
+			if(null!=object) {
+				response.setStatus(Status.SUCCESS);
+				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setMethodReturnValue(object);
+			}else {
+				response.setStatus(Status.BUSENESS_ERROR);
+				response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+				response.setMessage("System Error....");
+			}
+		} catch (StoreFlexServiceException e) {
+			response.setStatus(Status.BUSENESS_ERROR);
+			response.setStatusCode(Status.BUSENESS_ERROR.getCode());
+			response.setMessage("System Error...." + e.getMessage());
+		}
+		return response;
+	}
 	
 	
 }

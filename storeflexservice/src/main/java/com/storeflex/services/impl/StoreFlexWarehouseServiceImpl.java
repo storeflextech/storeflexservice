@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
+import com.storeflex.beans.WarehouseCategoriesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.beans.WarehouseViewBeanList;
@@ -93,6 +94,13 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 	public WarehouseViewBeanList getAllWarehouses(int page, int size) throws StoreFlexServiceException {
 		log.info("Starting method getAllWarehouses", this);
 		return dao.getAllWarehouses(page,size);
+	}
+
+	@Override
+	@Transactional
+	public WarehouseCategoriesBean getWareshouseCategories() throws StoreFlexServiceException {
+		log.info("Starting method getWareshouseCategories", this);
+		return dao.getWareshouseCategories();
 	}
 
 }

@@ -50,6 +50,12 @@ public class Warehouse  implements Serializable{
 	private LocalDateTime updateDate;
 	@Column(name = "status")
 	private boolean status;
+	@Column(name = "warehouse_facility_ids")
+	private String facilitiesId;
+	@Column(name = "warehouse_industry_ids")
+	private String industryId;
+	@Column(name = "warehouse_storage_ids")
+	private String storagesId;
 	
 	@OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
 	private Set<WarehouseAddress> address =  new HashSet<WarehouseAddress>();

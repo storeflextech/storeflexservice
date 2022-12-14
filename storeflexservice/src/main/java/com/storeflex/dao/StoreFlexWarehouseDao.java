@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
+import com.storeflex.beans.WarehouseCategoriesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.beans.WarehouseViewBeanList;
@@ -34,5 +35,7 @@ public interface StoreFlexWarehouseDao {
 	Map<String, Boolean> deleteWarehouseById(String warehouseId)throws StoreFlexServiceException;
 
 	WarehouseViewBeanList getAllWarehouses(int page, int size)throws StoreFlexServiceException;
+
+	WarehouseCategoriesBean getWareshouseCategories()throws StoreFlexServiceException;
 
 }
