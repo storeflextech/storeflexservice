@@ -23,25 +23,25 @@ import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.services.StoreFlexClientService;
 
 @Service
-public class StoreFlexClientImpl implements StoreFlexClientService{
+public class StoreFlexClientImpl implements StoreFlexClientService {
 
 	private static final Logger log = LoggerFactory.getLogger(StoreFlexClientService.class);
 
 	@Autowired
 	StoreFlexClientDao dao;
-		
+
 	@Override
 	@Transactional
 	public ClientProfile createFlexClient(StoreFlexClientBean request) throws StoreFlexServiceException {
-		 log.info("Starting method createFlexClient", this);
+		log.info("Starting method createFlexClient", this);
 		return dao.createFlexClient(request);
 	}
 
 	@Override
 	@Transactional
 	public Object getStoreFlexClient(String clientId) throws StoreFlexServiceException {
-	    log.info("Starting method getStoreFlexClient", this);
-	    return dao.getStoreFlexClient(clientId);
+		log.info("Starting method getStoreFlexClient", this);
+		return dao.getStoreFlexClient(clientId);
 	}
 
 	@Override
@@ -51,53 +51,57 @@ public class StoreFlexClientImpl implements StoreFlexClientService{
 		return dao.getStoreFlexClients(paging);
 	}
 
-	@Override
-	@Transactional	
-	public StoreFlexClientBean updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException {
-		 log.info("Starting method updateStoreFlexClient", this);
-		return dao.updateStoreFlexClient(clientBean);
-	}
-
-	@Override
-	@Transactional
-	public StoreFlexClientBean deActivateClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException {
-		 log.info("Starting method deActivateClient", this);
-		return dao.deActivateClient(clientBean);
-	}
-
+	/*
+	 * @Override
+	 * 
+	 * @Transactional public StoreFlexClientBean
+	 * updateStoreFlexClient(StoreFlexClientBean clientBean) throws
+	 * StoreFlexServiceException { log.info("Starting method updateStoreFlexClient",
+	 * this); return dao.updateStoreFlexClient(clientBean); }
+	 */
 	@Override
 	@Transactional
-	public StoreFlexClientAddBean updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException {
-		 log.info("Starting method updateClientAddress", this);
-		return dao.updateClientAddress(clientBean);
+	public boolean deActivateClient(String clientId) throws StoreFlexServiceException {
+		log.info("Starting method deActivateClient", this);
+		return dao.deActivateClient(clientId);
 	}
 
+	/*
+	 * @Override
+	 * 
+	 * @Transactional public StoreFlexClientAddBean
+	 * updateClientAddress(StoreFlexClientAddBean clientBean) throws
+	 * StoreFlexServiceException { log.info("Starting method updateClientAddress",
+	 * this); return dao.updateClientAddress(clientBean); }
+	 */
+	/*
+	 * @Override
+	 * 
+	 * @Transactional public StoreFlexClientContactBean
+	 * updateClientContacts(StoreFlexClientContactBean clientBean) throws
+	 * StoreFlexServiceException { log.info("Starting method updateClientContacts",
+	 * this); return dao.updateClientContacts(clientBean); }
+	 */
 	@Override
 	@Transactional
-	public StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException {
-		 log.info("Starting method updateClientContacts", this);
-		return dao.updateClientContacts(clientBean);
-	}
-
-	@Override
-	@Transactional
-	public Object uploadClientProfilePic(String clientId, MultipartFile file) throws StoreFlexServiceException, IOException {
-		 log.info("Starting method uploadClientProfilePic", this);
-		 return dao.updateClientContacts(clientId,file);
+	public Object uploadClientProfilePic(String clientId, MultipartFile file)
+			throws StoreFlexServiceException, IOException {
+		log.info("Starting method uploadClientProfilePic", this);
+		return dao.updateClientContacts(clientId, file);
 	}
 
 	@Override
 	@Transactional
 	public Map<String, Boolean> deleteClientById(String clientId) throws StoreFlexServiceException {
-		 log.info("Starting method deleteClientById", this);
-		 return dao.deleteClientById(clientId);
+		log.info("Starting method deleteClientById", this);
+		return dao.deleteClientById(clientId);
 	}
 
 	@Override
 	@Transactional
-	public List<Map>  clientDropList() throws StoreFlexServiceException {
-		 log.info("Starting method clientDropList", this);
-		 return dao.clientDropList();
+	public List<Map> clientDropList() throws StoreFlexServiceException {
+		log.info("Starting method clientDropList", this);
+		return dao.clientDropList();
 	}
 
 }

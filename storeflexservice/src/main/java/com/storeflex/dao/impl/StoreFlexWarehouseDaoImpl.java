@@ -28,6 +28,7 @@ import com.storeflex.beans.ClientWareHouseAddrBean;
 import com.storeflex.beans.ClientWareHousePhtBean;
 import com.storeflex.beans.ClientWareHousesBean;
 import com.storeflex.beans.ErrorCodeBean;
+import com.storeflex.beans.StoreFlexClientAddBean;
 import com.storeflex.beans.WarehouseCategoriesBean;
 import com.storeflex.beans.WarehouseListBean;
 import com.storeflex.beans.WarehouseRequestBean;
@@ -35,6 +36,7 @@ import com.storeflex.beans.WarehouseViewBean;
 import com.storeflex.beans.WarehouseViewBeanList;
 import com.storeflex.constants.ErrorCodes;
 import com.storeflex.dao.StoreFlexWarehouseDao;
+import com.storeflex.entities.ClientAddress;
 import com.storeflex.entities.ClientProfile;
 import com.storeflex.entities.UniqueId;
 import com.storeflex.entities.WareHousePhoto;
@@ -106,41 +108,69 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 			 if(clientProfileOpt.isPresent()) {
 				 WarehouseAddress address = new WarehouseAddress();
 				 Set<WarehouseAddress> addressSet = new HashSet<WarehouseAddress>();
+				 //new warehouse creation
 				 if(null==request.getWarehouseId()) {
 					 warehouse.setWarehouseId(uniqueId.getPrex()+uniqueId.getNextReserveId());
 					 warehouse.setClientId(request.getClientId()); 
 					 warehouse.setCreateBy("ADMIN");
-					 warehouse.setCreateDate(LocalDateTime.now()); 
+					 warehouse.setCreateDate(LocalDateTime.now());
+					 warehouse.setWarehouseName(request.getWarehouseName());
+					 warehouse.setDescp(request.getDescp());
+					 warehouse.setStatus(true);
+					 warehouse.setWarehouseTaxId(request.getWarehouseTaxId());
+					 warehouse.setProfilePhotoName(request.getProfilePhotoName());
+					 warehouse.setProfilePhoto(request.getProfilePhoto());
+					 addressSet= helper.populateAddress(addressSet,address,request,warehouse);
+					 if(!CollectionUtils.isEmpty(addressSet)) {
+						 warehouse.setAddress(addressSet); 
+					 }
+					 warehouse = warehouseRepository.save(warehouse);
+					 //increase the count of Client ReserveId
+					 uniqueId.setNextReserveId(uniqueId.getNextReserveId()+1);
+					 uniquePrefixRespository.save(uniqueId);
 				 }
-				 else {
-					 warehouse.setWarehouseId(request.getWarehouseId());
-					 warehouse.setClientId(request.getClientId()); 
-					 warehouse.setUpdatedBy("ADMIN");
-					 warehouse.setUpdateDate(LocalDateTime.now());  
-				 }
-				 warehouse.setWarehouseName(request.getWarehouseName());
-				 warehouse.setDescp(request.getDescp());
-				 warehouse.setStatus(true);
-				 warehouse.setWarehouseTaxId(request.getWarehouseTaxId());
-				 warehouse.setProfilePhotoName(request.getProfilePhotoName());
-				 warehouse.setProfilePhoto(request.getProfilePhoto());
-				 
-				 addressSet= helper.populateAddress(addressSet,address,request,warehouse);
-				 if(!CollectionUtils.isEmpty(addressSet)) {
-					 warehouse.setAddress(addressSet); 
-				 }
-				 warehouse = warehouseRepository.save(warehouse);
-				 
-				 //increase the count of Client ReserveId
-				 uniqueId.setNextReserveId(uniqueId.getNextReserveId()+1);
-				 uniquePrefixRespository.save(uniqueId);
 			 }else {
 				 log.error("client id is not is not valid", this ); 
 				 return null;
 			 }
 		 }else {
-			 log.error("client id is not is request", this );
-			 return null;
+			 //warehouse already exist and update 
+			 if(null!=request.getWarehouseId()) {
+				Optional<Warehouse> warehouseOpt =  warehouseRepository.findById(request.getWarehouseId());
+			    if(warehouseOpt.isPresent()) {
+			    	warehouse = warehouseOpt.get();
+			    	Optional.ofNullable(request.getWarehouseName()).ifPresent(warehouse::setWarehouseName);
+					Optional.ofNullable(request.getDescp()).ifPresent(warehouse::setDescp);
+					Optional.ofNullable(request.getWarehouseTaxId()).ifPresent(warehouse::setWarehouseTaxId);
+					Optional.ofNullable(request.getWarehouseTaxId()).ifPresent(warehouse::setWarehouseTaxId);
+					Optional.ofNullable(request.getProfilePhotoName()).ifPresent(warehouse::setProfilePhotoName);
+					Optional.ofNullable(request.getProfilePhoto()).ifPresent(warehouse::setProfilePhoto);
+					warehouse.setUpdateDate(LocalDateTime.now());
+					warehouse.setUpdatedBy("ADMIN");
+			    }
+			 // address update
+				for (ClientWareHouseAddrBean bean : request.getAddress()) {
+					Optional<WarehouseAddress> addressOpt = warehouseAddresRepository.findById(bean.getAddressId());
+					if (addressOpt.isPresent()) {
+						WarehouseAddress address = addressOpt.get();
+						Optional.ofNullable(bean.getAddressType()).ifPresent(address::setAddressType);
+						Optional.ofNullable(bean.getPlotNo()).ifPresent(address::setPlotNo);
+						Optional.ofNullable(bean.getHouseNo()).ifPresent(address::setHouseNo);
+						Optional.ofNullable(bean.getStreetDetails()).ifPresent(address::setStreetDetails);
+						Optional.ofNullable(bean.getCity()).ifPresent(address::setCityId);
+						Optional.ofNullable(bean.getState()).ifPresent(address::setState);
+						Optional.ofNullable(bean.getPincode()).ifPresent(address::setPincode);
+						address.setUpdateDate(LocalDateTime.now());
+						address.setUpdatedBy("ADMIN");
+						warehouseAddresRepository.save(address);
+					}
+				}
+			    
+			 }else {
+				 log.error("client id is not is request", this );
+				 return null; 
+			 }
+			 
 		 }
 		return warehouse;
 	}
@@ -483,5 +513,9 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao{
 		bean.setFacilities(map2);
 		log.info("End method getWareshouseCategories", this);
 		return bean;
+	}
+
+
+	private void setCity(String string1) {
 	}
 }

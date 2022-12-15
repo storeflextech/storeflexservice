@@ -211,102 +211,18 @@ public class StoreFlexClientController {
 		return response;
 	}
 	
-	@PostMapping(value="/clientUpdate" , produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value="clientUpdate" , notes ="Update Client Profile" , nickname="clientUpdate")
-	public StoreFlexResponse<Object> clientUpdate(@Validated @RequestBody StoreFlexClientBean request){
-		log.info("Starting method clientUpdate", this);
-		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		Object object = null;
-		try {
-			request = (StoreFlexClientBean) service.updateStoreFlexClient(request);
-			object = service.getStoreFlexClient(request.getClientId());
-			 if(null!=object) {
-				 response.setStatus(Status.SUCCESS);
-				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMessage("Client "+request.getCompyName()+" record updated");
-				 response.setMethodReturnValue(object);
-			 }else {
-				 response.setStatus(Status.BUSENESS_ERROR);
-				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-				 response.setMessage("System Error....");
-			 }
-		}
-		catch(StoreFlexServiceException e){
-			 response.setStatus(Status.BUSENESS_ERROR);
-			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			 response.setMessage("System Error...."+e.getMessage());
-		}
-		log.info("End method storeFlexClient", this);
-		return response;
-		
-	}
-	
-	@PostMapping(value="/updateClientAddress" , produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value="updateClientAddress" , notes ="Update Client Address Profile" , nickname="updateClientAddress")
-	public StoreFlexResponse<Object> updateClientAddress(@Validated @RequestBody StoreFlexClientAddBean request){
-		log.info("Starting method updateClientAddress", this);
-		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		try {
-			request = (StoreFlexClientAddBean) service.updateClientAddress(request);
-			 if(null!=request) {
-				 response.setStatus(Status.SUCCESS);
-				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMessage("Client address updated..");
-			 }else {
-				 response.setStatus(Status.BUSENESS_ERROR);
-				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-				 response.setMessage("System Error....");
-			 }
-		}
-		catch(StoreFlexServiceException e){
-			 response.setStatus(Status.BUSENESS_ERROR);
-			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			 response.setMessage("System Error...."+e.getMessage());
-		}
-		log.info("End method updateClientAddress", this);
-		return response;
-		
-	}
-	
-	@PostMapping(value="/updateClientContacts" , produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value="updateClientAddress" , notes ="Update Client Address Profile" , nickname="updateClientAddress")
-	public StoreFlexResponse<Object> updateClientContacts(@Validated @RequestBody StoreFlexClientContactBean request){
-		log.info("Starting method updateClientContacts", this);
-		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		Object object = null;
-		try {
-			request = (StoreFlexClientContactBean) service.updateClientContacts(request);
-			 if(null!=request) {
-				 response.setStatus(Status.SUCCESS);
-				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMessage("Client Contact updated..");
-			 }else {
-				 response.setStatus(Status.BUSENESS_ERROR);
-				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-				 response.setMessage("System Error....");
-			 }
-		}
-		catch(StoreFlexServiceException e){
-			 response.setStatus(Status.BUSENESS_ERROR);
-			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			 response.setMessage("System Error...."+e.getMessage());
-		}
-		log.info("End method updateClientContacts", this);
-		return response;
-		
-	}
-
 	@PostMapping(value="/deActivateClient" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="deActivateClient" , notes ="deactivate client" , nickname="deActivateClient")
-	public StoreFlexResponse<Object> deActivateClient(@Validated @RequestBody StoreFlexClientBean request){
+	public StoreFlexResponse<Object> deActivateClient(@RequestParam String clientId){
 		log.info("Starting method deActivateClient", this);
 		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		
 		try {
-			request = (StoreFlexClientBean) service.deActivateClient(request);
-			 if(null!=request) {
+			boolean flag  = service.deActivateClient(clientId);
+			 if(flag) {
 				 response.setStatus(Status.SUCCESS);
 				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMessage("Client" +request.getCompyName()+" with Id "+request.getClientId()+" deactivated successfully..");
+				 response.setMessage("ClientId "+clientId+" deactivated successfully..");
 			 }else {
 				 response.setStatus(Status.BUSENESS_ERROR);
 				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 

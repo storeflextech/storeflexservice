@@ -33,10 +33,6 @@ public class StoreFlexWarehouseHelper {
 				 address.setCreateBy("ADMIN");
 				 address.setCreateDate(LocalDateTime.now()); 
 			 }
-			 else {
-				 address.setUpdatedBy("ADMIN");
-				 address.setUpdateDate(LocalDateTime.now());  
-			 }
 			 address.setWarehouse(warehouse);
 			 addressSet.add(address);
 		 }

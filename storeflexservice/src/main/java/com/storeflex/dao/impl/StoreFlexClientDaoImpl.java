@@ -39,9 +39,9 @@ import com.storeflex.repositories.UniquePrefixRepository;
 import com.storeflex.utilities.ImageUtility;
 
 @Component
-public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
+public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	private static final Logger log = LoggerFactory.getLogger(StoreFlexClientDao.class);
-	
+
 	@Autowired
 	StoreFlexClientRepository storeFlexClientRepository;
 	@Autowired
@@ -54,66 +54,118 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 	StoreFlexClientHelper clientHelper;
 	@Autowired
 	UniquePrefixRepository uniquePrefixRespository;
-	
+
 	@Override
 	public ClientProfile createFlexClient(StoreFlexClientBean request) throws StoreFlexServiceException {
-		 log.info("Starting method createFlexClient", this);
-		 
-		 List<UniqueId> prefixList = uniquePrefixRespository.findAll();
-		 UniqueId uniqueId= helper.getStoreFlexClintPrefixDetails(prefixList);
-		 
-		 ClientProfile clientProfile = new ClientProfile();
-		 Set<ClientAddress> clientAddressSet =  new HashSet<ClientAddress>();
-		 Set<ClientContacts> clientContactSet =  new HashSet<ClientContacts>();
-		 if(null!=request) {
-			 if(null==request.getClientId()) {
-				 clientProfile.setClientId(uniqueId.getPrex()+uniqueId.getNextReserveId());
-				 clientProfile.setCreateBy("ADMIN");
-				 clientProfile.setCreateDate(LocalDateTime.now());
-			 }
-			 else {
-				 clientProfile.setClientId(request.getClientId());
-				 clientProfile.setUpdatedBy("ADMIN");
-				 clientProfile.setUpdatedate(LocalDateTime.now());
-			 }
-			 clientProfile.setCompyDesc(request.getCompyDesc());
-			 clientProfile.setCompyName(request.getCompyName());
-		     clientProfile.setUrl(request.getUrl());
-		     clientProfile.setGstNo(request.getGstNo());
-			 clientAddressSet = clientHelper.populateClientAddress(request, clientProfile, clientAddressSet);
-			 clientContactSet =clientHelper.populateClientContact(request,clientProfile,clientContactSet);
-			 clientProfile.setAddresses(clientAddressSet);
-			 clientProfile.setContact(clientContactSet);
-			 clientProfile.setStatus(true);
-			 clientProfile = storeFlexClientRepository.save(clientProfile);
-			 
-			 //increase the count of Clinet ReserveId
-			 uniqueId.setNextReserveId(uniqueId.getNextReserveId()+1);
-			 uniquePrefixRespository.save(uniqueId);
-		 }
+		log.info("Starting method createFlexClient", this);
+
+		List<UniqueId> prefixList = uniquePrefixRespository.findAll();
+		UniqueId uniqueId = helper.getStoreFlexClintPrefixDetails(prefixList);
+
+		ClientProfile clientProfile = new ClientProfile();
+		Set<ClientAddress> clientAddressSet = new HashSet<ClientAddress>();
+		Set<ClientContacts> clientContactSet = new HashSet<ClientContacts>();
+		if (null != request) {
+			if (null == request.getClientId()) {
+				clientProfile.setClientId(uniqueId.getPrex() + uniqueId.getNextReserveId());
+				clientProfile.setCreateBy("ADMIN");
+				clientProfile.setCreateDate(LocalDateTime.now());
+				clientProfile.setCompyDesc(request.getCompyDesc());
+				clientProfile.setCompyName(request.getCompyName());
+				clientProfile.setUrl(request.getUrl());
+				clientProfile.setGstNo(request.getGstNo());
+				clientAddressSet = clientHelper.populateClientAddress(request, clientProfile, clientAddressSet);
+				clientContactSet = clientHelper.populateClientContact(request, clientProfile, clientContactSet);
+				clientProfile.setAddresses(clientAddressSet);
+				clientProfile.setContact(clientContactSet);
+				clientProfile.setStatus(true);
+				clientProfile = storeFlexClientRepository.save(clientProfile);
+				// increase the count of Clinet ReserveId
+				uniqueId.setNextReserveId(uniqueId.getNextReserveId() + 1);
+				uniquePrefixRespository.save(uniqueId);
+			} else {
+				Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(request.getClientId());
+				
+				if (clientProfileOpt.isPresent()) {
+					clientProfile = clientProfileOpt.get();
+					Optional.ofNullable(request.getCompyName()).ifPresent(clientProfile::setCompyName);
+					Optional.ofNullable(request.getCompyDesc()).ifPresent(clientProfile::setCompyDesc);
+					Optional.ofNullable(request.getGstNo()).ifPresent(clientProfile::setGstNo);
+					clientProfile.setUpdatedate(LocalDateTime.now());
+					clientProfile.setUpdatedBy("ADMIN");
+					/*
+					 * Optional.ofNullable(clientBean.getPhoto()).ifPresent(client::setPhoto);
+					 * Optional.ofNullable(clientBean.getPhotoName()).ifPresent(client::setPhotoName
+					 * );
+					 */
+					Optional.ofNullable(request.getUrl()).ifPresent(clientProfile::setUrl);
+					clientProfile = storeFlexClientRepository.save(clientProfile);
+				}
+				if(!CollectionUtils.isEmpty( request.getAddresses())) {
+					// address update
+					for (StoreFlexClientAddBean bean : request.getAddresses()) {
+						Optional<ClientAddress> addressOpt = storeFlexClientAddrsRepository.findById(bean.getAddressId());
+						if (addressOpt.isPresent()) {
+							ClientAddress address = addressOpt.get();
+							Optional.ofNullable(bean.getAddressType()).ifPresent(address::setAddressType);
+							Optional.ofNullable(bean.getPlotNo()).ifPresent(address::setPlotNo);
+							Optional.ofNullable(bean.getHouseNo()).ifPresent(address::setHouseNo);
+							Optional.ofNullable(bean.getStreetDetails()).ifPresent(address::setStreetDetails);
+							Optional.ofNullable(bean.getCity()).ifPresent(address::setCity);
+							Optional.ofNullable(bean.getState()).ifPresent(address::setState);
+							Optional.ofNullable(bean.getPincode()).ifPresent(address::setPincode);
+							address.setUpdateTime(LocalDateTime.now());
+							address.setUpdatedBy("ADMIN");
+							storeFlexClientAddrsRepository.save(address);
+						}
+					}
+				}
+				
+				if(!CollectionUtils.isEmpty(request.getContact())) {
+					// contact update
+					for (StoreFlexClientContactBean bean : request.getContact()) {
+						Optional<ClientContacts> contactOpt = storeFlexClientContactsRepository
+								.findById(bean.getContactId());
+						ClientContacts contact = null;
+						if (contactOpt.isPresent()) {
+							contact = contactOpt.get();
+							Optional.ofNullable(bean.getContactName()).ifPresent(contact::setContactName);
+							Optional.ofNullable(bean.getEmailId()).ifPresent(contact::setEmailId);
+							Optional.ofNullable(bean.getLandLine()).ifPresent(contact::setLandLine);
+							Optional.ofNullable(bean.getLandLineExt()).ifPresent(contact::setLandLineExt);
+							Optional.ofNullable(bean.getMobileNo()).ifPresent(contact::setMobileNo);
+							contact.setUpdateTime(LocalDateTime.now());
+							contact.setUpdatedBy("ADMIN");
+							storeFlexClientContactsRepository.save(contact);
+						}
+					}
+				}
+				
+			}
+
+		}
 		return clientProfile;
 	}
 
 	@Override
 	public Object getStoreFlexClient(String clientId) throws StoreFlexServiceException {
-		 log.info("Starting method getStoreFlexClient", this);
+		log.info("Starting method getStoreFlexClient", this);
 		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
-		if(clientProfileOpt.isPresent()) {
+		if (clientProfileOpt.isPresent()) {
 			ClientProfile clientProfile = clientProfileOpt.get();
 			StoreFlexClientBean clientBean = new StoreFlexClientBean();
-			clientBean = clientHelper.populateClientList(clientProfile,clientBean);
+			clientBean = clientHelper.populateClientList(clientProfile, clientBean);
 			return clientBean;
 		}
 		return null;
 	}
-	
-	
+
 	@Override
 	public StoreFlexClientBean updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException {
-		 log.info("Starting method getStoreFlexClient", this);
-		ClientProfile client =null;
+		log.info("Starting method getStoreFlexClient", this);
+		ClientProfile client = null;
 		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientBean.getClientId());
-		if(clientProfileOpt.isPresent()) {
+		if (clientProfileOpt.isPresent()) {
 			client = clientProfileOpt.get();
 			Optional.ofNullable(clientBean.getCompyName()).ifPresent(client::setCompyName);
 			Optional.ofNullable(clientBean.getCompyDesc()).ifPresent(client::setCompyDesc);
@@ -129,13 +181,13 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 		}
 		return clientBean;
 	}
-	
+
 	@Override
-	public StoreFlexClientAddBean updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException {
+	public StoreFlexClientAddBean updateClientAddress(StoreFlexClientAddBean clientBean)
+			throws StoreFlexServiceException {
 		log.info("Starting method getStoreFlexClient", this);
 		ClientProfile client = null;
-		Optional<ClientAddress> addressOpt = storeFlexClientAddrsRepository
-				.findById(clientBean.getAddressId());
+		Optional<ClientAddress> addressOpt = storeFlexClientAddrsRepository.findById(clientBean.getAddressId());
 		if (addressOpt.isPresent()) {
 			ClientAddress address = addressOpt.get();
 			Optional.ofNullable(clientBean.getAddressType()).ifPresent(address::setAddressType);
@@ -151,12 +203,13 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 		}
 		return clientBean;
 	}
-	
+
 	@Override
-	public StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException {
+	public StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean)
+			throws StoreFlexServiceException {
 		log.info("Starting method getStoreFlexClient", this);
 		Optional<ClientContacts> contactOpt = storeFlexClientContactsRepository.findById(clientBean.getContactId());
-		ClientContacts contact =null;
+		ClientContacts contact = null;
 		if (contactOpt.isPresent()) {
 			contact = contactOpt.get();
 			Optional.ofNullable(clientBean.getContactName()).ifPresent(contact::setContactName);
@@ -168,89 +221,92 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao{
 			contact.setUpdatedBy("ADMIN");
 			storeFlexClientContactsRepository.save(contact);
 		}
-	
+
 		return clientBean;
 	}
-	
+
 	@Override
-	public StoreFlexClientBean deActivateClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException {
-		 log.info("Starting method getStoreFlexClient", this);
-		ClientProfile client =null;
-		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientBean.getClientId());
-		if(clientProfileOpt.isPresent()) {
+	public boolean deActivateClient(String clientId) throws StoreFlexServiceException {
+		log.info("Starting method getStoreFlexClient", this);
+		ClientProfile client = null;
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
+		if (clientProfileOpt.isPresent()) {
 			client = clientProfileOpt.get();
 			client.setUpdatedate(LocalDateTime.now());
 			client.setUpdatedBy("ADMIN");
 			client.setStatus(false);
 			client = storeFlexClientRepository.save(client);
+			return true;
 		}
-		return clientBean;
+		return false;
 	}
 
 	@Override
 	public ClientProfileListBean getStoreFlexClients(Pageable paging) throws StoreFlexServiceException {
-		 log.info("Starting method getStoreFlexClients", this);
-		 ClientProfileListBean listBean = new ClientProfileListBean();
-		 List<ClientProfile> clientList =  new ArrayList<ClientProfile>();
+		log.info("Starting method getStoreFlexClients", this);
+		ClientProfileListBean listBean = new ClientProfileListBean();
+		List<ClientProfile> clientList = new ArrayList<ClientProfile>();
 		List<StoreFlexClientBean> clientBeanList = new ArrayList<StoreFlexClientBean>();
 		Page<ClientProfile> clientListPageable = storeFlexClientRepository.findAll(paging);
 		clientList = clientListPageable.getContent();
-		if(!CollectionUtils.isEmpty(clientList)) {
-			
-			for(ClientProfile client : clientList) {
+		if (!CollectionUtils.isEmpty(clientList)) {
+
+			for (ClientProfile client : clientList) {
 				StoreFlexClientBean clientBean = new StoreFlexClientBean();
 				clientBean = clientHelper.populateClientList(client, clientBean);
 				clientBeanList.add(clientBean);
 			}
-		};
+		}
+		;
 		listBean.setTotalRecords(clientListPageable.getTotalElements());
 		listBean.setClientList(clientBeanList);
 		return listBean;
 	}
 
 	@Override
-	public Object updateClientContacts(String clientId, MultipartFile file) throws StoreFlexServiceException, IOException {
-		 log.info("Starting method updateClientContacts", this);
-		 ClientProfile clientProfile =null;
-		 Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
-		 if(clientProfileOpt.isPresent()) {
-			 clientProfile= clientProfileOpt.get();
-			 clientProfile.setPhotoName(file.getOriginalFilename());
-			 clientProfile.setPhoto(ImageUtility.compressImage(file.getBytes()));
-			 storeFlexClientRepository.save(clientProfile);
-		 }
+	public Object updateClientContacts(String clientId, MultipartFile file)
+			throws StoreFlexServiceException, IOException {
+		log.info("Starting method updateClientContacts", this);
+		ClientProfile clientProfile = null;
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
+		if (clientProfileOpt.isPresent()) {
+			clientProfile = clientProfileOpt.get();
+			clientProfile.setPhotoName(file.getOriginalFilename());
+			clientProfile.setPhoto(ImageUtility.compressImage(file.getBytes()));
+			storeFlexClientRepository.save(clientProfile);
+		}
 		return clientProfile;
 	}
 
 	@Override
 	public Map<String, Boolean> deleteClientById(String clientId) throws StoreFlexServiceException {
-		 log.info("Starting method deleteClientById", this);
-		 Map<String, Boolean> response = new HashMap<>();
-		 ClientProfile clientProfile =null;
-		 Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
-		 if(clientProfileOpt.isPresent()) {
-			 clientProfile= clientProfileOpt.get();
-			 clientProfile.setStatus(false);
-			 clientProfile.setUpdatedate(LocalDateTime.now());
-			 clientProfile.setUpdatedBy("ADMIN");
-			 storeFlexClientRepository.save(clientProfile);
-			 response.put("deleted", Boolean.TRUE);
-		 }else {
-			 response.put("deleted", Boolean.FALSE); 
-		 }
+		log.info("Starting method deleteClientById", this);
+		Map<String, Boolean> response = new HashMap<>();
+		ClientProfile clientProfile = null;
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
+		if (clientProfileOpt.isPresent()) {
+			clientProfile = clientProfileOpt.get();
+			clientProfile.setStatus(false);
+			clientProfile.setUpdatedate(LocalDateTime.now());
+			clientProfile.setUpdatedBy("ADMIN");
+			storeFlexClientRepository.save(clientProfile);
+			response.put("deleted", Boolean.TRUE);
+		} else {
+			response.put("deleted", Boolean.FALSE);
+		}
 		return response;
 	}
 
 	@Override
 	public List<Map> clientDropList() throws StoreFlexServiceException {
-		 log.info("Starting method clientDropList", this);
-		 List<ClientProfile> clientProfileList = storeFlexClientRepository.findAll();
-		 List<Map> list = new ArrayList<Map>();
-		 for(ClientProfile client :clientProfileList) {
-			 HashMap<String, String> map = new HashMap<String,String>();
-			 map.put(client.getClientId(), client.getCompyName());
-			 list.add(map);
-		 }
+		log.info("Starting method clientDropList", this);
+		List<ClientProfile> clientProfileList = storeFlexClientRepository.findAll();
+		List<Map> list = new ArrayList<Map>();
+		for (ClientProfile client : clientProfileList) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(client.getClientId(), client.getCompyName());
+			list.add(map);
+		}
 		return list;
 	}
 

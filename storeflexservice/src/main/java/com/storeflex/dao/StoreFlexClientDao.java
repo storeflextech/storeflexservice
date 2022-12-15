@@ -24,7 +24,7 @@ public interface StoreFlexClientDao {
 
 	StoreFlexClientBean updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
 
-	StoreFlexClientBean deActivateClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
+	boolean deActivateClient(String clientId) throws StoreFlexServiceException;
 
 	StoreFlexClientAddBean updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException;
 
