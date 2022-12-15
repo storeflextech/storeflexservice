@@ -22,13 +22,13 @@ public interface StoreFlexClientService {
 
 	ClientProfileListBean getStoreFlexClients(Pageable paging)throws StoreFlexServiceException;
 
-	Object updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
+	//Object updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
 
-	Object deActivateClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
+	boolean deActivateClient(String clientId) throws StoreFlexServiceException;
 
-	Object updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException;
+	//Object updateClientAddress(StoreFlexClientAddBean clientBean) throws StoreFlexServiceException;
 
-	Object updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException;
+	//Object updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException;
 
 	Object uploadClientProfilePic(String clientId, MultipartFile file)throws StoreFlexServiceException, IOException;
 
