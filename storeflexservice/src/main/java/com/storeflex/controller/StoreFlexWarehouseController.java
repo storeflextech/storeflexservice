@@ -58,7 +58,7 @@ public class StoreFlexWarehouseController {
 			if (null != object) {
 				response.setStatus(Status.SUCCESS);
 				response.setStatusCode(Status.SUCCESS.getCode());
-				response.setMessage("Warehouse " + request.getWarehouseName() + " record submitted");
+				response.setMessage("Warehouse record submitted");
 				response.setMethodReturnValue(object);
 			} else {
 				response.setStatus(Status.BUSENESS_ERROR);

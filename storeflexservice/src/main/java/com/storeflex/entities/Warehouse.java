@@ -56,15 +56,19 @@ public class Warehouse  implements Serializable{
 	private String industryId;
 	@Column(name = "warehouse_storage_ids")
 	private String storagesId;
+	@Column(name = "dockhighdoors")
+	private String dockhighdoors;
+	@Column(name = "atgradedoors")
+	private String atgradedoors;
+	@Column(name = "ceillingheight")
+	private String ceillingheight;
+	@Column(name = "forkliftcapacity")
+	private String forkliftcapacity;
 	
 	@OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
 	private Set<WarehouseAddress> address =  new HashSet<WarehouseAddress>();
 
 	@OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
 	private Set<WareHousePhoto> photos =  new HashSet<WareHousePhoto>();
-
-	@OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
-	private Set<WarehouseHours> hours =  new HashSet<WarehouseHours>();
-
 
  }
