@@ -27,7 +27,8 @@ public class WarehouseHours {
 	@Column(name = "id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
-	
+	@Column(name = "warehouse_id")
+	private String warehouseId;
 	@Column(name = "openday")
 	private String day;
 	@Column(name = "starttime")
@@ -45,8 +46,5 @@ public class WarehouseHours {
 	@Column(name = "update_date")
 	private LocalDateTime updateDate;
 	
-	@ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name="warehouse_id")
-    @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
-	private Warehouse warehouse;
+
 }

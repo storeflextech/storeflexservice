@@ -51,10 +51,20 @@ public class ClientWareHousesBean implements Serializable{
 	private String facilitiesId;
 	private String industryId;
 	private String storagesId;
+	
+	private String dockhighdoors;
+	private String atgradedoors;
+	private String ceillingheight;
+	private String forkliftcapacity;
+	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<ClientWareHouseAddrBean> address ;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<ClientWareHousePhtBean> photos;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private WarehousehoursBean hours;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private WarehousePriceBean warehouseprice;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private ErrorCode errorCode; 
 }
