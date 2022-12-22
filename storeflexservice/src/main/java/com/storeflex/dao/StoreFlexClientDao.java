@@ -30,7 +30,7 @@ public interface StoreFlexClientDao {
 
 	StoreFlexClientContactBean updateClientContacts(StoreFlexClientContactBean clientBean) throws StoreFlexServiceException;
 
-	Object updateClientContacts(String clientId, MultipartFile file)throws StoreFlexServiceException, IOException;
+	byte[] uploadClientProfilePic(String clientId, MultipartFile file)throws StoreFlexServiceException, IOException;
 
 	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 

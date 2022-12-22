@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -73,28 +75,14 @@ public class StoreFlexClientController {
 	
 	@PostMapping(value="/uploadClientProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="uploadClientProfilePic" , notes ="upload storeflex client profile pic , input client Id , profile name and pciture" , nickname="uploadClientProfilePic")
-	public StoreFlexResponse<Object>uploadClientProfilePic(@RequestParam String clientId,@RequestParam("clientPhoto") MultipartFile file) throws IOException{
+	public  ResponseEntity<?> uploadClientProfilePic(@RequestParam String clientId,@RequestParam("clientPhoto") MultipartFile file) throws IOException, StoreFlexServiceException{
 		log.info("Starting method uploadClientProfilePic", this);
-		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		Object object;
-		try {
+		byte[] object;
 			object = service.uploadClientProfilePic(clientId,file);
-			 if(null!=object) {
-				 response.setStatus(Status.SUCCESS);
-				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMethodReturnValue(object);
-			 }else {
-				 response.setStatus(Status.BUSENESS_ERROR);
-				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-				 response.setMessage("System Error....");
-			 }
-		}
-		catch(StoreFlexServiceException e){
-			 response.setStatus(Status.BUSENESS_ERROR);
-			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			 response.setMessage("System Error...."+e.getMessage());
-		}
-		return response;
+			return ResponseEntity.status(HttpStatus.OK)
+					.contentType(MediaType.valueOf(file.getContentType()))
+					.body(object);
+			
 	}
 
 	@GetMapping(value="/client" , produces = MediaType.APPLICATION_JSON_VALUE)

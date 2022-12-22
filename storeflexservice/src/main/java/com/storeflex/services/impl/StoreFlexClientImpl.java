@@ -84,10 +84,10 @@ public class StoreFlexClientImpl implements StoreFlexClientService {
 	 */
 	@Override
 	@Transactional
-	public Object uploadClientProfilePic(String clientId, MultipartFile file)
+	public byte[] uploadClientProfilePic(String clientId, MultipartFile file)
 			throws StoreFlexServiceException, IOException {
 		log.info("Starting method uploadClientProfilePic", this);
-		return dao.updateClientContacts(clientId, file);
+		return dao.uploadClientProfilePic(clientId, file);
 	}
 
 	@Override

@@ -12,8 +12,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -34,7 +37,9 @@ public class ClientProfile  implements Serializable{
 	private String compyName;
 	@Column(name = "compny_descp")
 	private String compyDesc;
+	@Lob
 	@Column(name = "compny_photo")
+	@Type(type = "org.hibernate.type.BinaryType")
 	private byte[] photo;
 	@Column(name = "compny_photo_name")
 	private String photoName;

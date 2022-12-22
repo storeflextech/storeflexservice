@@ -207,7 +207,7 @@ public class StoreFlexController {
 				 if(null!=object) {
 					 response.setStatus(Status.SUCCESS);
 					 response.setStatusCode(Status.SUCCESS.getCode());
-					 response.setMessage("Successfully Uploaded");
+					 response.setMessage("Profile picture upload successfully");
 				 }else {
 					 response.setStatus(Status.BUSENESS_ERROR);
 					 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 

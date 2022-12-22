@@ -85,7 +85,7 @@ public class StoreFlexWarehouseController {
 			 if(null!=object) {
 				 response.setStatus(Status.SUCCESS);
 				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMethodReturnValue(object);
+				 response.setMessage("Profile picture upload successfully");
 			 }else {
 				 response.setStatus(Status.BUSENESS_ERROR);
 				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
@@ -127,7 +127,7 @@ public class StoreFlexWarehouseController {
 				response.setStatus(Status.SUCCESS);
 				response.setStatusCode(Status.SUCCESS.getCode());
 				response.setMessage(message);
-				response.setMethodReturnValue(message);
+				
 			}else {
 				response.setStatus(Status.BUSENESS_ERROR);
 				response.setStatusCode(Status.BUSENESS_ERROR.getCode());
