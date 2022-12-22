@@ -54,6 +54,8 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	StoreFlexClientHelper clientHelper;
 	@Autowired
 	UniquePrefixRepository uniquePrefixRespository;
+	@Autowired
+	ImageUtility until;
 
 	@Override
 	public ClientProfile createFlexClient(StoreFlexClientBean request) throws StoreFlexServiceException {
@@ -264,7 +266,7 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	}
 
 	@Override
-	public Object updateClientContacts(String clientId, MultipartFile file)
+	public byte[] uploadClientProfilePic(String clientId, MultipartFile file)
 			throws StoreFlexServiceException, IOException {
 		log.info("Starting method updateClientContacts", this);
 		ClientProfile clientProfile = null;
@@ -275,7 +277,7 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 			clientProfile.setPhoto(ImageUtility.compressImage(file.getBytes()));
 			storeFlexClientRepository.save(clientProfile);
 		}
-		return clientProfile;
+		return ImageUtility.decompressImage(clientProfile.getPhoto());
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -64,6 +65,21 @@ public class ClientUsers  implements Serializable{
 	private String email;
 	@Column(name = "status")
 	private String status;
+	
+	@Column(name="roletype")
+	private String roleType;
+	@Column(name="created_by" )
+	private String createBy;
+	@Column(name="created_date" )
+	private LocalDateTime createDate;
+	@Column(name="update_by" )
+	private String updatedBy;
+	@Column(name="update_date" )
+	private LocalDateTime updateDate;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reg_id")
+	private UsersReg userReg;
 	
 	@ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name="client_id")
