@@ -36,6 +36,8 @@ public interface StoreFlexClientDao {
 
 	List<Map> clientDropList()throws StoreFlexServiceException;
 
+	StoreFlexClientBean uploadClientProfilePic(String clientId)throws StoreFlexServiceException;
+
 	
 
 }

@@ -77,7 +77,7 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 
 	@Override
 	@Transactional
-	public Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file) throws StoreFlexServiceException, IOException {
+	public byte[] uploadWareHouseProfilePic(String warehouseId, MultipartFile file) throws StoreFlexServiceException, IOException {
 		log.info("Starting method uploadWareHouseProfilePic", this);
 		return dao.uploadWareHouseProfilePic(warehouseId,file);
 	}

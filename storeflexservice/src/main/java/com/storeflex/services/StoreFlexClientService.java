@@ -34,5 +34,7 @@ public interface StoreFlexClientService {
 
 	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 
-	List<Map> clientDropList()throws StoreFlexServiceException;;
+	List<Map> clientDropList()throws StoreFlexServiceException;
+
+	StoreFlexClientBean uploadClientProfilePic(String clientId)throws StoreFlexServiceException;;
 }

@@ -488,7 +488,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 	}
 
 	@Override
-	public Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file)
+	public byte[] uploadWareHouseProfilePic(String warehouseId, MultipartFile file)
 			throws StoreFlexServiceException, IOException {
 		log.info("Starting method getWarehouseSearch", this);
 		Warehouse warehouse = null;
@@ -499,7 +499,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 			warehouse.setProfilePhoto(ImageUtility.compressImage(file.getBytes()));
 			warehouseRepository.save(warehouse);
 		}
-		return warehouse;
+		return ImageUtility.decompressImage(warehouse.getProfilePhoto());
 	}
 
 	@Override

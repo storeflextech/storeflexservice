@@ -104,4 +104,11 @@ public class StoreFlexClientImpl implements StoreFlexClientService {
 		return dao.clientDropList();
 	}
 
+	@Override
+	@Transactional
+	public StoreFlexClientBean uploadClientProfilePic(String clientId) throws StoreFlexServiceException {
+		log.info("Starting method uploadClientProfilePic", this);
+		return dao.uploadClientProfilePic(clientId);
+	}
+
 }

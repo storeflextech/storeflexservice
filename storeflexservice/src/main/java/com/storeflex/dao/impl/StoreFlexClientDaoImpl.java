@@ -275,7 +275,8 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 			clientProfile = clientProfileOpt.get();
 			clientProfile.setPhotoName(file.getOriginalFilename());
 			clientProfile.setPhoto(ImageUtility.compressImage(file.getBytes()));
-			storeFlexClientRepository.save(clientProfile);
+			clientProfile.setPhotoType(file.getContentType());
+			clientProfile=storeFlexClientRepository.save(clientProfile);
 		}
 		return ImageUtility.decompressImage(clientProfile.getPhoto());
 	}
@@ -310,6 +311,23 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 			list.add(map);
 		}
 		return list;
+	}
+
+	@Override
+	public StoreFlexClientBean uploadClientProfilePic(String clientId) throws StoreFlexServiceException {
+		log.info("Starting method uploadClientProfilePic", this);
+		StoreFlexClientBean bean =  new StoreFlexClientBean();
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
+		if (clientProfileOpt.isPresent()) {
+			ClientProfile profile = clientProfileOpt.get();
+			bean.setClientId(profile.getClientId());
+			bean.setPhoto(ImageUtility.decompressImage(profile.getPhoto()));
+			bean.setPhotoName(profile.getPhotoName());
+			bean.setPhotoType(profile.getPhotoType());
+		}else {
+			return null;
+		}
+		return bean;
 	}
 
 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.storeflex.entities.ClientAddress;
@@ -33,6 +35,8 @@ public class StoreFlexClientBean implements Serializable{
 	private byte[] photo;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String photoName;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String photoType;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String url;
 	@JsonInclude(JsonInclude.Include.NON_NULL)

@@ -43,6 +43,8 @@ public class ClientProfile  implements Serializable{
 	private byte[] photo;
 	@Column(name = "compny_photo_name")
 	private String photoName;
+	@Column(name="photo_type")
+	private String photoType;
 	@Column(name = "compny_url")
 	private String url;
 	@Column(name = "compny_gstno")

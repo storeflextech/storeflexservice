@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -82,6 +83,18 @@ public class StoreFlexClientController {
 			return ResponseEntity.status(HttpStatus.OK)
 					.contentType(MediaType.valueOf(file.getContentType()))
 					.body(object);
+			
+	}
+	
+	@GetMapping(value="/uploadClientProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value="uploadClientProfilePic" , notes ="upload storeflex client profile pic , input client Id , profile name and pciture" , nickname="uploadClientProfilePic")
+	public  ResponseEntity<?> uploadClientProfile(@RequestParam String clientId) throws IOException, StoreFlexServiceException{
+		log.info("Starting method uploadClientProfilePic", this);
+		StoreFlexClientBean object;
+			object = service.uploadClientProfilePic(clientId);
+			return ResponseEntity.status(HttpStatus.OK)
+					.contentType(MediaType.valueOf(object.getPhotoType()))
+					.body(new ByteArrayResource(object.getPhoto()));
 			
 	}
 
