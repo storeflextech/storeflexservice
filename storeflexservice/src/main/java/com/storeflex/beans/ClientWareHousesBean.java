@@ -47,7 +47,7 @@ public class ClientWareHousesBean implements Serializable{
 	private String updatedBy;
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDateTime updateDate;
-	private boolean status;
+	private String status;
 	private String facilitiesId;
 	private String industryId;
 	private String storagesId;

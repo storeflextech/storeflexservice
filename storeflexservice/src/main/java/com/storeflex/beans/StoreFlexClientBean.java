@@ -51,7 +51,7 @@ public class StoreFlexClientBean implements Serializable{
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDateTime updatedate;
-	private boolean status = false;
+	private String status;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<StoreFlexClientAddBean> addresses;
 	@JsonInclude(JsonInclude.Include.NON_NULL)

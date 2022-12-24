@@ -42,7 +42,7 @@ public class WarehouseView implements Serializable{
 	@Column(name = "created_date")
     private LocalDateTime createdTime;
 	@Column(name = "status")
-    private boolean status;
+    private String status;
 	@Column(name = "house_no")
     private String houseNo;
 	@Column(name = "plot_no")

@@ -34,7 +34,7 @@ public interface StoreFlexWarehouseService {
 
 	Map<String, Boolean> deleteWarehouseById(String warehouseId)throws StoreFlexServiceException;
 
-	WarehouseViewBeanList getAllWarehouses(int page, int size)throws StoreFlexServiceException;
+	WarehouseViewBeanList getAllWarehouses(int page, int size,String status)throws StoreFlexServiceException;
 
 	WarehouseCategoriesBean getWareshouseCategories()throws StoreFlexServiceException;
 

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import com.storeflex.beans.StoreFlexClientBean;
 import com.storeflex.beans.ClientProfileListBean;
 import com.storeflex.beans.StoreFlexClientAddBean;
 import com.storeflex.beans.StoreFlexClientContactBean;
+import com.storeflex.constants.StoreFlexConstants;
 import com.storeflex.dao.StoreFlexClientDao;
 import com.storeflex.entities.ClientAddress;
 import com.storeflex.entities.ClientContacts;
@@ -37,6 +39,7 @@ import com.storeflex.repositories.StoreFlexClientContactsRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
 import com.storeflex.repositories.UniquePrefixRepository;
 import com.storeflex.utilities.ImageUtility;
+import com.storeflex.utilities.SearchSpecification;
 
 @Component
 public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
@@ -56,6 +59,8 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	UniquePrefixRepository uniquePrefixRespository;
 	@Autowired
 	ImageUtility until;
+	@Autowired
+	SearchSpecification searchSpecification;
 
 	@Override
 	public ClientProfile createFlexClient(StoreFlexClientBean request) throws StoreFlexServiceException {
@@ -80,7 +85,7 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 				clientContactSet = clientHelper.populateClientContact(request, clientProfile, clientContactSet);
 				clientProfile.setAddresses(clientAddressSet);
 				clientProfile.setContact(clientContactSet);
-				clientProfile.setStatus(true);
+				clientProfile.setStatus(StoreFlexConstants.PROGRESS_STATUS);
 				clientProfile = storeFlexClientRepository.save(clientProfile);
 				// increase the count of Clinet ReserveId
 				uniqueId.setNextReserveId(uniqueId.getNextReserveId() + 1);
@@ -236,7 +241,7 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 			client = clientProfileOpt.get();
 			client.setUpdatedate(LocalDateTime.now());
 			client.setUpdatedBy("ADMIN");
-			client.setStatus(false);
+			client.setStatus(StoreFlexConstants.IN_ACTIVE_STATUS);
 			client = storeFlexClientRepository.save(client);
 			return true;
 		}
@@ -244,24 +249,30 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	}
 
 	@Override
-	public ClientProfileListBean getStoreFlexClients(Pageable paging) throws StoreFlexServiceException {
+	public ClientProfileListBean getStoreFlexClients(Pageable paging,String status) throws StoreFlexServiceException {
 		log.info("Starting method getStoreFlexClients", this);
 		ClientProfileListBean listBean = new ClientProfileListBean();
 		List<ClientProfile> clientList = new ArrayList<ClientProfile>();
 		List<StoreFlexClientBean> clientBeanList = new ArrayList<StoreFlexClientBean>();
-		Page<ClientProfile> clientListPageable = storeFlexClientRepository.findAll(paging);
-		clientList = clientListPageable.getContent();
-		if (!CollectionUtils.isEmpty(clientList)) {
+		
+		Specification<ClientProfile>  specficationObject = searchSpecification.getClientDetails(status);
+		if(null!=specficationObject) {
+			Page<ClientProfile> clientListPageable = storeFlexClientRepository.findAll(specficationObject, paging);
+			clientList = clientListPageable.getContent();
+			if (!CollectionUtils.isEmpty(clientList)) {
 
-			for (ClientProfile client : clientList) {
-				StoreFlexClientBean clientBean = new StoreFlexClientBean();
-				clientBean = clientHelper.populateClientList(client, clientBean);
-				clientBeanList.add(clientBean);
+				for (ClientProfile client : clientList) {
+					if(client.getStatus().equalsIgnoreCase(status)) {
+						StoreFlexClientBean clientBean = new StoreFlexClientBean();
+						clientBean = clientHelper.populateClientList(client, clientBean);
+						clientBeanList.add(clientBean);
+					}
+				}
 			}
+			;
+			listBean.setTotalRecords(clientListPageable.getTotalElements());
+			listBean.setClientList(clientBeanList);
 		}
-		;
-		listBean.setTotalRecords(clientListPageable.getTotalElements());
-		listBean.setClientList(clientBeanList);
 		return listBean;
 	}
 
@@ -289,7 +300,7 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findById(clientId);
 		if (clientProfileOpt.isPresent()) {
 			clientProfile = clientProfileOpt.get();
-			clientProfile.setStatus(false);
+			clientProfile.setStatus(StoreFlexConstants.IN_ACTIVE_STATUS);
 			clientProfile.setUpdatedate(LocalDateTime.now());
 			clientProfile.setUpdatedBy("ADMIN");
 			storeFlexClientRepository.save(clientProfile);

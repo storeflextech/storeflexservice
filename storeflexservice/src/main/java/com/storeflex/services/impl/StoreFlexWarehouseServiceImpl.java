@@ -91,9 +91,9 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 
 	@Override
 	@Transactional
-	public WarehouseViewBeanList getAllWarehouses(int page, int size) throws StoreFlexServiceException {
+	public WarehouseViewBeanList getAllWarehouses(int page, int size,String status) throws StoreFlexServiceException {
 		log.info("Starting method getAllWarehouses", this);
-		return dao.getAllWarehouses(page,size);
+		return dao.getAllWarehouses(page,size,status);
 	}
 
 	@Override

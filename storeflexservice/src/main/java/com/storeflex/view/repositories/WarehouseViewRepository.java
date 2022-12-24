@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 import com.storeflex.view.entities.WarehouseView;
 
 @Repository
-public interface WarehouseViewRepository extends PagingAndSortingRepository<WarehouseView, String>,JpaSpecificationExecutor{
+public interface WarehouseViewRepository extends PagingAndSortingRepository<WarehouseView, String>,JpaSpecificationExecutor<WarehouseView>{
 
 }

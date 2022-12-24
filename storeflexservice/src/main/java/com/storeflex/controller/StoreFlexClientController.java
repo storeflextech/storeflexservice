@@ -74,7 +74,7 @@ public class StoreFlexClientController {
 		return response;
 	}
 	
-	@PostMapping(value="/uploadClientProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value="/uploadClientProfilePic" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ApiOperation(value="uploadClientProfilePic" , notes ="upload storeflex client profile pic , input client Id , profile name and pciture" , nickname="uploadClientProfilePic")
 	public  ResponseEntity<?> uploadClientProfilePic(@RequestParam String clientId,@RequestParam("clientPhoto") MultipartFile file) throws IOException, StoreFlexServiceException{
 		log.info("Starting method uploadClientProfilePic", this);
@@ -158,13 +158,14 @@ public class StoreFlexClientController {
 	@ApiOperation(value="clients" , notes ="get all storeflex client" , nickname="clients")
 	public StoreFlexResponse<ClientProfileListBean> getStoreFlexClients(
 			@RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "3") int size
+	        @RequestParam(defaultValue = "3") int size,
+	        @RequestParam(value = "status") String status
 			){
 		log.info("Starting method getStoreFlexClients", this);
 		 StoreFlexResponse<ClientProfileListBean> response = new StoreFlexResponse<ClientProfileListBean>();
 		 Pageable paging = PageRequest.of(page, size);
 		 try {
-			ClientProfileListBean objectList = service.getStoreFlexClients(paging);
+			ClientProfileListBean objectList = service.getStoreFlexClients(paging,status);
 		 	 if(null!=objectList) {
 				 response.setStatus(Status.SUCCESS);
 				 response.setStatusCode(Status.SUCCESS.getCode());

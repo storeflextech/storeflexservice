@@ -20,7 +20,7 @@ public interface StoreFlexClientService {
 
 	Object getStoreFlexClient(String clientId)throws StoreFlexServiceException;
 
-	ClientProfileListBean getStoreFlexClients(Pageable paging)throws StoreFlexServiceException;
+	ClientProfileListBean getStoreFlexClients(Pageable paging,String status)throws StoreFlexServiceException;
 
 	//Object updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
 

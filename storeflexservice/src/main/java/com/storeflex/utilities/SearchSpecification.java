@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import com.storeflex.beans.WarehouseRequestBean;
+import com.storeflex.entities.ClientProfile;
 import com.storeflex.entities.WarehouseAddress;
 import com.storeflex.view.entities.WarehouseView;
 
@@ -34,4 +35,31 @@ public class SearchSpecification {
 			return builder.and(predicates.toArray(new Predicate[0]));
 		};
 	}
+	
+	public Specification<WarehouseView> getWarehouseDetails(String status) {
+		return (root, query, builder) -> {
+			List<Predicate> predicates = new ArrayList<>();
+			if (!StringUtils.isEmpty(status)) {
+				predicates.add(builder.equal(root.get("status"), status));
+			}
+			if (predicates.size() == 0) {
+				return null;
+			}
+			return builder.and(predicates.toArray(new Predicate[0]));
+		};
+	}
+	
+	public Specification<ClientProfile> getClientDetails(String status) {
+		return (root, query, builder) -> {
+			List<Predicate> predicates = new ArrayList<>();
+			if (!StringUtils.isEmpty(status)) {
+				predicates.add(builder.equal(root.get("status"), status));
+			}
+			if (predicates.size() == 0) {
+				return null;
+			}
+			return builder.and(predicates.toArray(new Predicate[0]));
+		};
+	}
+
 }

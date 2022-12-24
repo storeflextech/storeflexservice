@@ -75,10 +75,10 @@ public class StoreFlexClientHelper {
 		clientBean.setUpdatedate(clientProfile.getUpdatedate());
 		clientBean.setUpdatedBy(clientProfile.getUpdatedBy());
 		clientBean.setUrl(clientProfile.getUrl());
-		clientBean.setPhotoName(clientProfile.getPhotoName());
-		clientBean.setPhoto(clientProfile.getPhoto());
+		//clientBean.setPhotoName(clientProfile.getPhotoName());
+		//clientBean.setPhoto(clientProfile.getPhoto());
 		clientBean.setGstNo(clientProfile.getGstNo());
-		clientBean.setStatus(clientProfile.isStatus());
+		clientBean.setStatus(clientProfile.getStatus());
 
 		Set<ClientAddress> clientAddressSet = clientProfile.getAddresses();
 		if (!CollectionUtils.isEmpty(clientAddressSet)) {

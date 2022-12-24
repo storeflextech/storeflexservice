@@ -244,11 +244,12 @@ public class StoreFlexWarehouseController {
 	@ApiOperation(value = "warehouses", notes = "get all warehouses", nickname = "warehouses")
 	public StoreFlexResponse<WarehouseViewBeanList> getAllWarehouses(
 			@RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "3") int size){
+	        @RequestParam(defaultValue = "3") int size,
+	        @RequestParam(value = "status") String status){
 		log.info("Starting method wareHouse", this);
 		StoreFlexResponse<WarehouseViewBeanList> response = new StoreFlexResponse<WarehouseViewBeanList>();
 		try {
-			WarehouseViewBeanList warehouseViewBeanList = service.getAllWarehouses(page,size);
+			WarehouseViewBeanList warehouseViewBeanList = service.getAllWarehouses(page,size,status);
 			if (null != warehouseViewBeanList && null!=warehouseViewBeanList.getWarehouseViewBean() && warehouseViewBeanList.getWarehouseViewBean().size()>0) {
 				response.setStatus(Status.SUCCESS);
 				response.setStatusCode(Status.SUCCESS.getCode());
