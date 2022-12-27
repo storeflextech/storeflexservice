@@ -1,17 +1,33 @@
 package com.storeflex.helpers;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.storeflex.beans.StoreFlexClientBean;
+import com.storeflex.beans.CustEnquiryBean;
 import com.storeflex.beans.StoreFlexClientAddBean;
 import com.storeflex.beans.StoreFlexClientContactBean;
+import com.storeflex.beans.StoreFlexUserBean;
+import com.storeflex.config.AppConfiguration;
 import com.storeflex.entities.ClientAddress;
 import com.storeflex.entities.ClientContacts;
 import com.storeflex.entities.ClientProfile;
@@ -20,6 +36,9 @@ import com.storeflex.entities.ClientProfile;
 public class StoreFlexClientHelper {
 	private static final Logger log = LoggerFactory.getLogger(StoreFlexClientHelper.class);
 
+	@Autowired
+	AppConfiguration appConfig;
+	
 	public Set<ClientAddress> populateClientAddress(StoreFlexClientBean request, ClientProfile clientProfile,
 			Set<ClientAddress> clientAddressSet) {
 		log.info("Starting method populateClientAddress", this);
@@ -120,4 +139,47 @@ public class StoreFlexClientHelper {
 		log.info("Ending method populateClientList", this);
 		return clientBean;
 	}
+
+	public void onboardUser(StoreFlexUserBean bean) throws MessagingException, IOException {
+		log.info("Start method onboardUser", this);
+		onboardUserEmail(bean);
+	}
+	
+	void onboardUserEmail(StoreFlexUserBean bean) throws AddressException, MessagingException, IOException {
+		log.info("Start method onboardUserEmail", this);
+		Properties props = new Properties();
+		   props.put("mail.smtp.auth", appConfig.isAuth());
+		   props.put("mail.smtp.starttls.enable", appConfig.isEnable());
+		   props.put("mail.smtp.host", appConfig.getMailHost());
+		   props.put("mail.smtp.port", "587");
+		   Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			      protected PasswordAuthentication getPasswordAuthentication() {
+			         return new PasswordAuthentication(appConfig.getMailUser(), appConfig.getMailUserPsw());
+			      }
+			   });
+		   
+		   Message msg = new MimeMessage(session);
+		   msg.setFrom(new InternetAddress(appConfig.getMailUser(), false));
+
+		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(bean.getEmail()));
+		   msg.setSubject("Welcome to Storeflex-" +bean.getFirstName());
+		   msg.setContent("Thanks your registration to Storeflex platform is done <b>"+bean.getFirstName()+".</br> Please login to  below url <li>http://52.66.213.74/ </li> . Username is your register email and password will be combination of your last name with register mobile no , example : If user name will <b>'Jon Martin'</b> and mobile no is '<b>123456694</b>' , then password will be <b> Martin123456694</b> ", "text/html");
+		   msg.setSentDate(new Date());
+
+		  /* MimeBodyPart messageBodyPart = new MimeBodyPart();
+		   messageBodyPart.setContent("Thanks for connecting with us <b>"+bean.getFirstName()+". We can help on your enquiry", "text/html");
+
+		   Multipart multipart = new MimeMultipart();
+		   multipart.addBodyPart(messageBodyPart);
+		   MimeBodyPart attachPart = new MimeBodyPart();
+
+		   attachPart.attachFile("/var/tmp/image19.png");
+		   multipart.addBodyPart(attachPart);
+		   msg.setContent(multipart);*/
+		   Transport.send(msg);  
+		   
+       
+        log.info("End method sendEmail", this);
+
+    }
 }

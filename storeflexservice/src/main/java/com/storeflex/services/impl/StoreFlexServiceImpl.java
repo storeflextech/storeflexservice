@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexBean;
 import com.storeflex.beans.StoreFlexUserBean;
+import com.storeflex.constants.StoreFlexConstants;
 import com.storeflex.dao.StoreFlexDao;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.services.StoreFlexService;
@@ -44,9 +45,18 @@ public class StoreFlexServiceImpl implements StoreFlexService{
 	
 	@Override
 	@Transactional
-	public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType) throws StoreFlexServiceException {
+	public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType,String clientCodes) throws StoreFlexServiceException {
 		log.info("Starting method storeFlexUserFinalize", this);
-		return storeFlexDao.storeFlexUserFinalize(req,roleType);
+		if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.SL_USER)) {
+			return storeFlexDao.storeFlexUserFinalizeSL(req,roleType,clientCodes);
+		}
+		if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.CL_USER)) {
+			return storeFlexDao.storeFlexUserFinalizeCL(req,roleType,clientCodes);
+		}
+		if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.CU_USER)) {
+			return storeFlexDao.storeFlexUserFinalizeCU(req,roleType);
+		}
+		return null;
 	}
 	
 	@Override

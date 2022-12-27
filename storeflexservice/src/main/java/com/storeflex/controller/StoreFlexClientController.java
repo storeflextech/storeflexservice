@@ -157,15 +157,17 @@ public class StoreFlexClientController {
 	@GetMapping(value="/clients" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="clients" , notes ="get all storeflex client" , nickname="clients")
 	public StoreFlexResponse<ClientProfileListBean> getStoreFlexClients(
-			@RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "3") int size,
-	        @RequestParam(value = "status") String status
+			@RequestParam(required=false,defaultValue = "0") int page,
+	        @RequestParam(required=false,defaultValue = "3") int size,
+	        @RequestParam(required=true,value = "status") String status,
+	        @RequestParam(required=false,value = "clientId") String clientId,
+	        @RequestParam(required=false,value = "gstno") String gstno
 			){
 		log.info("Starting method getStoreFlexClients", this);
 		 StoreFlexResponse<ClientProfileListBean> response = new StoreFlexResponse<ClientProfileListBean>();
 		 Pageable paging = PageRequest.of(page, size);
 		 try {
-			ClientProfileListBean objectList = service.getStoreFlexClients(paging,status);
+			ClientProfileListBean objectList = service.getStoreFlexClients(paging,status,clientId,gstno);
 		 	 if(null!=objectList) {
 				 response.setStatus(Status.SUCCESS);
 				 response.setStatusCode(Status.SUCCESS.getCode());
@@ -194,7 +196,7 @@ public class StoreFlexClientController {
 		List<Map>  mapList = null;
 		try {
 			 mapList = service.clientDropList();
-		 	 if(null!=mapList) {
+		 	 if(!CollectionUtils.isEmpty(mapList)) {
 				 response.setStatus(Status.SUCCESS);
 				 response.setStatusCode(Status.SUCCESS.getCode());
 				 response.setMethodReturnValue(mapList);

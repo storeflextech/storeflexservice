@@ -24,7 +24,7 @@ public Object getState(String countyId)throws StoreFlexServiceException;
 
 public Object getRoles()throws StoreFlexServiceException;
 
-public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
+public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType,String clientCodes)throws StoreFlexServiceException;
 
 public Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
 

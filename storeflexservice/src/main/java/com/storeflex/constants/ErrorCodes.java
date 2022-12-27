@@ -12,6 +12,7 @@ public class ErrorCodes {
 	public static final String USER_NOT_REGISTER = "USR_002";
 	public static final String USER_RECORDS_NOT_UPDATED = "USR_003";
 	public static final String WL_001="WL_001";
+	public static final String NO_CLIENT_EXIST="CL_001";
 	
 	
 	

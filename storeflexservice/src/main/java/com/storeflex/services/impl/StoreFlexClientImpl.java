@@ -46,9 +46,9 @@ public class StoreFlexClientImpl implements StoreFlexClientService {
 
 	@Override
 	@Transactional
-	public ClientProfileListBean getStoreFlexClients(Pageable paging,String status) throws StoreFlexServiceException {
+	public ClientProfileListBean getStoreFlexClients(Pageable paging,String status,String cleintId,String gstNo) throws StoreFlexServiceException {
 		log.info("Starting method getStoreFlexClients", this);
-		return dao.getStoreFlexClients(paging,status);
+		return dao.getStoreFlexClients(paging,status,cleintId,gstNo);
 	}
 
 	/*

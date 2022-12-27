@@ -25,7 +25,11 @@ public interface StoreFlexDao {
 
 	Object getRoles()throws StoreFlexServiceException;
 
-	Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
+	Object storeFlexUserFinalizeSL(StoreFlexUserBean req, String roleType,String clientCodes)throws StoreFlexServiceException;
+	
+	Object storeFlexUserFinalizeCL(StoreFlexUserBean req, String roleType,String clientCodes)throws StoreFlexServiceException;
+	
+	Object storeFlexUserFinalizeCU(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 
 	Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
 

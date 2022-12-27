@@ -23,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexClientBean;
 import com.storeflex.beans.ClientProfileListBean;
+import com.storeflex.beans.ErrorCodeBean;
 import com.storeflex.beans.StoreFlexClientAddBean;
 import com.storeflex.beans.StoreFlexClientContactBean;
+import com.storeflex.constants.ErrorCodes;
 import com.storeflex.constants.StoreFlexConstants;
 import com.storeflex.dao.StoreFlexClientDao;
 import com.storeflex.entities.ClientAddress;
@@ -249,18 +251,18 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	}
 
 	@Override
-	public ClientProfileListBean getStoreFlexClients(Pageable paging,String status) throws StoreFlexServiceException {
+	public ClientProfileListBean getStoreFlexClients(Pageable paging,String status,String clientId , String gstNo) throws StoreFlexServiceException {
 		log.info("Starting method getStoreFlexClients", this);
+		ErrorCodeBean errorbean = new ErrorCodeBean();
 		ClientProfileListBean listBean = new ClientProfileListBean();
 		List<ClientProfile> clientList = new ArrayList<ClientProfile>();
 		List<StoreFlexClientBean> clientBeanList = new ArrayList<StoreFlexClientBean>();
 		
-		Specification<ClientProfile>  specficationObject = searchSpecification.getClientDetails(status);
+		Specification<ClientProfile>  specficationObject = searchSpecification.getClientDetails(status,clientId,gstNo);
 		if(null!=specficationObject) {
 			Page<ClientProfile> clientListPageable = storeFlexClientRepository.findAll(specficationObject, paging);
 			clientList = clientListPageable.getContent();
 			if (!CollectionUtils.isEmpty(clientList)) {
-
 				for (ClientProfile client : clientList) {
 					if(client.getStatus().equalsIgnoreCase(status)) {
 						StoreFlexClientBean clientBean = new StoreFlexClientBean();
@@ -268,10 +270,14 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 						clientBeanList.add(clientBean);
 					}
 				}
+				listBean.setTotalRecords(clientListPageable.getTotalElements());
+				listBean.setClientList(clientBeanList);
+			}else {
+				log.error("NO Client exist",this);
+				errorbean.setErrorCode(ErrorCodes.NO_CLIENT_EXIST);
+				errorbean.setErrorMessage("No record found , ERROR code "+ErrorCodes.NO_CLIENT_EXIST);
+				listBean.setErrorCode(errorbean);
 			}
-			;
-			listBean.setTotalRecords(clientListPageable.getTotalElements());
-			listBean.setClientList(clientBeanList);
 		}
 		return listBean;
 	}
@@ -314,7 +320,8 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 	@Override
 	public List<Map> clientDropList() throws StoreFlexServiceException {
 		log.info("Starting method clientDropList", this);
-		List<ClientProfile> clientProfileList = storeFlexClientRepository.findAll();
+		String status ="ACTIVE";
+		List<ClientProfile> clientProfileList = storeFlexClientRepository.getActiveCompany(status);
 		List<Map> list = new ArrayList<Map>();
 		for (ClientProfile client : clientProfileList) {
 			HashMap<String, String> map = new HashMap<String, String>();

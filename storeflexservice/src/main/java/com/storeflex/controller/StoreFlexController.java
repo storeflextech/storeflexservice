@@ -160,7 +160,8 @@ public class StoreFlexController {
 		 log.info("End method getStoreFlexUserId", this);
 		return response;
 	 }
-	 
+	
+	 /*
 	 @PostMapping(value="/storeflexuser" ,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflexuser" , notes ="Create Store flex users" , nickname="storeflexuser")
 	 public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType){
@@ -195,7 +196,7 @@ public class StoreFlexController {
 			}
 			 return response;
 		
-	 }
+	 }*/
 	 
 	 @PutMapping(value="/uploaduserpic" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflexuser" , notes ="Upload Store flex users profile pic" , nickname="storeflexuser")
