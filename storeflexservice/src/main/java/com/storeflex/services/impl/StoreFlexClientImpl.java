@@ -111,4 +111,11 @@ public class StoreFlexClientImpl implements StoreFlexClientService {
 		return dao.uploadClientProfilePic(clientId);
 	}
 
+	@Override
+	@Transactional
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method gstcheckavailability", this);
+		return dao.gstcheckavailability(gst);
+	}
+
 }

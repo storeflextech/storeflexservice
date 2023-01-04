@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexClientBean;
@@ -346,6 +347,19 @@ public class StoreFlexClientDaoImpl implements StoreFlexClientDao {
 			return null;
 		}
 		return bean;
+	}
+
+	@Override
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method uploadClientProfilePic", this);
+		if(StringUtils.isEmpty(gst)) {
+			return false;
+		}
+		Optional<ClientProfile> clientProfileOpt = storeFlexClientRepository.findByGst(gst);
+		if(clientProfileOpt.isPresent()) {
+			return false ;
+		}
+		return true;
 	}
 
 }

@@ -103,4 +103,11 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 		return dao.getWareshouseCategories();
 	}
 
+	@Override
+	@Transactional
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method gstcheckavailability", this);
+		return dao.gstcheckavailability(gst);
+	}
+
 }

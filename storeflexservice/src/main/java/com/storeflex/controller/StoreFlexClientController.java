@@ -243,6 +243,30 @@ public class StoreFlexClientController {
 		
 	}
 
-
+	@GetMapping(value="/gstcheckavailability" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value="client" , notes ="find gst avalibility" , nickname="client")
+    public StoreFlexResponse<Object> gstcheckavailability(@RequestParam String gst){
+		log.info("Start method gstcheckavailability", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		try {
+			boolean flag  = service.gstcheckavailability(gst);
+			 if(flag) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("GST "+gst+" available");
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("GST "+gst+" not available");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		log.info("End method gstcheckavailability", this);
+		return response;
+    } 
 }
 

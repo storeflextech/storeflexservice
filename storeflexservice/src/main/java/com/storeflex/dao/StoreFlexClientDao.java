@@ -38,6 +38,8 @@ public interface StoreFlexClientDao {
 
 	StoreFlexClientBean uploadClientProfilePic(String clientId)throws StoreFlexServiceException;
 
+	boolean gstcheckavailability(String gst)throws StoreFlexServiceException;
+
 	
 
 }

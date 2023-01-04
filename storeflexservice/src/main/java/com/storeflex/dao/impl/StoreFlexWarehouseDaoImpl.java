@@ -605,6 +605,17 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 		return bean;
 	}
 
-	private void setCity(String string1) {
+
+	@Override
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method uploadClientProfilePic", this);
+		if(StringUtils.isEmpty(gst)) {
+			return false;
+		}
+		Optional<Warehouse> warehouseOpt = warehouseRepository.findByGst(gst);
+		if(warehouseOpt.isPresent()) {
+			return false ;
+		}
+		return true;
 	}
 }

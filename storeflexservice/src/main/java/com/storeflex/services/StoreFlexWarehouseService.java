@@ -38,6 +38,8 @@ public interface StoreFlexWarehouseService {
 
 	WarehouseCategoriesBean getWareshouseCategories()throws StoreFlexServiceException;
 
+	boolean gstcheckavailability(String gst)throws StoreFlexServiceException;
+
 
 
 }
