@@ -18,11 +18,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.ErrorCodeBean;
 import com.storeflex.beans.StoreFlexAddressBean;
 import com.storeflex.beans.StoreFlexBean;
+import com.storeflex.beans.StoreFlexClientUsersBean;
 import com.storeflex.beans.StoreFlexContactBean;
 import com.storeflex.beans.StoreFlexUserBean;
 import com.storeflex.constants.ErrorCodes;
@@ -431,7 +433,94 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 	    }
 		}
 
-	
+	@Override
+	public Object clientUsers(String clientId,Pageable paging,String status) throws StoreFlexServiceException {
+		log.info("Start method clientUsers", this);
+		List<ClientUsers>  clientUsersList =null;
+		if(!StringUtils.isEmpty(status)) {
+			clientUsersList =  clientUsersRepository.findByClient_Id(clientId,status,paging);
+		}else {
+			clientUsersList =  clientUsersRepository.findByClient_Id(clientId,paging);
+		}
+		
+		 List<StoreFlexClientUsersBean> userList =  new ArrayList<StoreFlexClientUsersBean>();
+		 for(ClientUsers user : clientUsersList) {
+			 StoreFlexClientUsersBean userBean =  new StoreFlexClientUsersBean();
+			 userBean.setUserId(user.getUserId());
+			 userBean.setFirstName(user.getFirstName());
+			 userBean.setMiddleName(user.getMiddleName());
+			 userBean.setLastName(user.getLastName());
+			 userBean.setMobileNo(user.getMobileNo());
+			 userBean.setEmail(user.getEmail());
+			 userBean.setEmergenyPhno(user.getEmergenyPhno());
+			 userBean.setHouseNo(user.getHouseNo());
+			 userBean.setAddress(user.getAddress());
+			 userBean.setCity(user.getCity());
+			 userBean.setState(user.getState());
+			 userBean.setCountry(user.getCountry());
+			 userBean.setCreateBy(user.getCreateBy());
+			 userBean.setCreateDate(user.getCreateDate());
+			 userBean.setUpdatedBy(user.getUpdatedBy());
+			 userBean.setUpdateDate(user.getUpdateDate());
+			 userList.add(userBean);
+		 }
+		return userList;
+	}
+
+	@Override
+	public Object updateclientusers(StoreFlexClientUsersBean requestBean) throws StoreFlexServiceException {
+		log.info("Start method updateclientusers", this);
+		 ClientUsers users =null;
+		 if(null!=requestBean.getUserId()) {
+		Optional<ClientUsers> clientUsersOpt = clientUsersRepository.findById(requestBean.getUserId());
+		 if(clientUsersOpt.isPresent()) {
+			 users=	clientUsersOpt.get();
+			 users.setAddress(requestBean.getAddress());
+			 users.setCity(requestBean.getCity());
+			 users.setState(requestBean.getState());
+			 users.setMobileNo(requestBean.getMobileNo());
+			 users.setEmergenyPhno(requestBean.getEmergenyPhno());
+			 users.setEmail(requestBean.getEmail());
+			 users.setUpdateDate(LocalDateTime.now());
+			 users.setUpdatedBy("ADMIN");
+			 users.setFirstName(requestBean.getFirstName());
+			 users.setMiddleName(requestBean.getMiddleName());
+			 users.setLastName(requestBean.getLastName());
+			 users= clientUsersRepository.save(users);
+		 }
+		}
+		 log.info("End method updateclientusers", this);
+		return users;
+	}
+
+	@Override
+	public Object clientUserById(String userId) throws StoreFlexServiceException {
+		log.info("Start method clientUserById", this);
+		StoreFlexClientUsersBean bean =  new StoreFlexClientUsersBean();
+		Optional<ClientUsers> clientUsersOpt = clientUsersRepository.findById(UUID.fromString(userId));
+		 if(clientUsersOpt.isPresent()) {
+			 ClientUsers users=	clientUsersOpt.get(); 
+			 bean.setUserId(users.getUserId());
+			 bean.setFirstName(users.getFirstName()); 
+			 bean.setMiddleName(users.getMiddleName());
+			 bean.setLastName(users.getLastName());
+			 bean.setAddress(users.getAddress());
+			 bean.setCity(users.getCity());
+			 bean.setState(users.getState());
+			 bean.setCountry(users.getCountry());
+			 bean.setMobileNo(users.getMobileNo());
+			 bean.setEmergenyPhno(users.getEmergenyPhno());
+			 bean.setEmail(users.getEmail());
+			 bean.setCreateBy(users.getCreateBy());
+			 bean.setCreateDate(users.getCreateDate());
+			 bean.setUpdatedBy(users.getUpdatedBy());
+			 bean.setUpdateDate(users.getUpdateDate());
+			 bean.setStatus(users.getStatus());
+		 }
+		return bean;
+	}
+
+
 
 	
 }
