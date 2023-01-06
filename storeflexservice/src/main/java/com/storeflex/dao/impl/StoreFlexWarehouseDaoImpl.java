@@ -560,6 +560,12 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 				if (!CollectionUtils.isEmpty(beanList)) {
 					warehouseViewList.setWarehouseViewBean(beanList);
 					warehouseViewList.setTotalRecord(pages.getTotalElements());
+				}else {
+					log.error("No Warehouses found", ErrorCodes.WL_001);
+					errorbean.setErrorCode(ErrorCodes.WL_001);
+					errorbean.setErrorMessage("No Warehouses found");
+					warehouseViewList.setErrorCode(errorbean);
+					return warehouseViewList;
 				}
 			} else {
 				log.error("No Warehouses found", ErrorCodes.WL_001);
@@ -568,6 +574,12 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 				warehouseViewList.setErrorCode(errorbean);
 				return warehouseViewList;
 			}
+		}else {
+			log.error("No Warehouses found", ErrorCodes.WL_001);
+			errorbean.setErrorCode(ErrorCodes.WL_001);
+			errorbean.setErrorMessage("No Warehouses found");
+			warehouseViewList.setErrorCode(errorbean);
+			return warehouseViewList;
 		}
 		
 

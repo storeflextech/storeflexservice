@@ -19,6 +19,7 @@ import lombok.ToString;
 public class WarehouseViewBeanList implements Serializable{
 	private static final long serialVersionUID = -57922037348780430L;
 	private long totalRecord;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<WarehouseViewBean> warehouseViewBean;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private ErrorCodeBean errorCode;

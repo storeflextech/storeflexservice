@@ -110,4 +110,32 @@ public class StoreflexAuthController {
 		}
 		return response;
 	}
+	
+	
+	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "login", notes = "Storeflex Customer login  , passed email id and password", nickname = "login")
+	public StoreFlexResponse<Object> login(@Validated @RequestBody TestAuthBean bean){
+		log.info("Starting method testLogin", this);	
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		Object object=null;
+		try {
+			object=service.sllogin(bean);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("Login Success");
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		return response;
+	}
 }
