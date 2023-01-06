@@ -36,6 +36,7 @@ import com.storeflex.beans.WarehouseRequestBean;
 import com.storeflex.beans.WarehouseViewBean;
 import com.storeflex.beans.WarehouseViewBeanList;
 import com.storeflex.constants.ErrorCodes;
+import com.storeflex.constants.StoreFlexConstants;
 import com.storeflex.dao.StoreFlexWarehouseDao;
 import com.storeflex.entities.ClientAddress;
 import com.storeflex.entities.ClientProfile;
@@ -105,7 +106,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 	WarehousePriceRepository warehousePriceRepository;
 	@Autowired
 	WarehouseHoursRepository warehouseHoursRepository;
-
+	
 	@Override
 	public Warehouse createWarehouse(ClientWareHousesBean request) throws StoreFlexServiceException {
 		log.info("Starting method createWarehouse", this);
@@ -129,7 +130,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 					warehouse.setCreateDate(LocalDateTime.now());
 					warehouse.setWarehouseName(request.getWarehouseName());
 					warehouse.setDescp(request.getDescp());
-					warehouse.setStatus(true);
+					warehouse.setStatus(StoreFlexConstants.ACTIVE_STATUS);
 					warehouse.setWarehouseTaxId(request.getWarehouseTaxId());
 					warehouse.setProfilePhotoName(request.getProfilePhotoName());
 					warehouse.setProfilePhoto(request.getProfilePhoto());
@@ -267,7 +268,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 			warehousebean.setDescp(warehouse.getDescp());
 			warehousebean.setProfilePhotoName(warehouse.getProfilePhotoName());
 			warehousebean.setProfilePhoto(warehouse.getProfilePhoto());
-			warehousebean.setStatus(warehouse.isStatus());
+			warehousebean.setStatus(warehouse.getStatus());
 			warehousebean.setWarehouseTaxId(warehouse.getWarehouseTaxId());
 			warehousebean.setFacilitiesId(warehouse.getFacilitiesId());
 			warehousebean.setIndustryId(warehouse.getIndustryId());
@@ -352,7 +353,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 			warehouseBean.setCreateBy(warehouse.getCreateBy());
 			warehouseBean.setCreateDate(warehouse.getCreateDate());
 			warehouseBean.setDescp(warehouse.getDescp());
-			warehouseBean.setStatus(warehouse.isStatus());
+			warehouseBean.setStatus(warehouse.getStatus());
 			warehouseBean.setUpdatedBy(warehouse.getUpdatedBy());
 			warehouseBean.setUpdateDate(warehouse.getUpdateDate());
 			warehouseBean.setWarehouseTaxId(warehouse.getWarehouseTaxId());
@@ -474,7 +475,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 						viewbean.setCity(view.getCity());
 						viewbean.setState(view.getState());
 						viewbean.setPincode(view.getPincode());
-						viewbean.setStatus(view.isStatus());
+						viewbean.setStatus(view.getStatus());
 						beanList.add(viewbean);
 					}
 				}
@@ -488,7 +489,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 	}
 
 	@Override
-	public Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file)
+	public byte[] uploadWareHouseProfilePic(String warehouseId, MultipartFile file)
 			throws StoreFlexServiceException, IOException {
 		log.info("Starting method getWarehouseSearch", this);
 		Warehouse warehouse = null;
@@ -499,7 +500,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 			warehouse.setProfilePhoto(ImageUtility.compressImage(file.getBytes()));
 			warehouseRepository.save(warehouse);
 		}
-		return warehouse;
+		return ImageUtility.decompressImage(warehouse.getProfilePhoto());
 	}
 
 	@Override
@@ -510,7 +511,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 		Optional<Warehouse> warehouseOpt = warehouseRepository.findById(warehouseId);
 		if (warehouseOpt.isPresent()) {
 			warehouse = warehouseOpt.get();
-			warehouse.setStatus(false);
+			warehouse.setStatus(StoreFlexConstants.IN_ACTIVE_STATUS);
 			warehouse.setUpdateDate(LocalDateTime.now());
 			warehouse.setUpdatedBy("ADMIN");
 			warehouseRepository.save(warehouse);
@@ -522,47 +523,53 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 	}
 
 	@Override
-	public WarehouseViewBeanList getAllWarehouses(int page, int size) throws StoreFlexServiceException {
+	public WarehouseViewBeanList getAllWarehouses(int page, int size,String status) throws StoreFlexServiceException {
 		log.info("Starting method getAllWarehouses", this);
 		ErrorCodeBean errorbean = new ErrorCodeBean();
 		Pageable pageable = PageRequest.of(page, size);
 		Page<WarehouseView> pages = null;
 		List<WarehouseView> list = null;
-		pages = warehouseViewRepository.findAll(pageable);
+		//pages = warehouseViewRepository.findAll(pageable);
 		List<WarehouseViewBean> beanList = new ArrayList<WarehouseViewBean>();
 		WarehouseViewBeanList warehouseViewList = new WarehouseViewBeanList();
-		if (pages != null && pages.getContent() != null) {
-			list = pages.getContent();
-			if (!CollectionUtils.isEmpty(list)) {
-				for (WarehouseView view : list) {
-					WarehouseViewBean viewbean = new WarehouseViewBean();
-					viewbean.setWarehouseId(view.getWarehouseId());
-					viewbean.setWarehouseName(view.getWarehouseName());
-					viewbean.setProfilePicName(view.getProfilePicName());
-					viewbean.setProfilePic(view.getProfilePic());
-					viewbean.setClientId(view.getClientId());
-					viewbean.setDescp(view.getDescp());
-					viewbean.setHouseNo(view.getHouseNo());
-					viewbean.setPlotNo(view.getPlotNo());
-					viewbean.setStreetAddrs(view.getStreetAddrs());
-					viewbean.setCity(view.getCity());
-					viewbean.setState(view.getState());
-					viewbean.setPincode(view.getPincode());
-					viewbean.setStatus(view.isStatus());
-					beanList.add(viewbean);
+		Specification<WarehouseView> specficationObject = searchSpecification.getWarehouseDetails(status);
+		
+		if(null!=specficationObject) {
+			pages=	warehouseViewRepository.findAll(specficationObject, pageable);
+			if (pages != null && pages.getContent() != null) {
+				list = pages.getContent();
+				if (!CollectionUtils.isEmpty(list)) {
+					for (WarehouseView view : list) {
+						WarehouseViewBean viewbean = new WarehouseViewBean();
+						viewbean.setWarehouseId(view.getWarehouseId());
+						viewbean.setWarehouseName(view.getWarehouseName());
+						//viewbean.setProfilePicName(view.getProfilePicName());
+						//viewbean.setProfilePic(view.getProfilePic());
+						viewbean.setClientId(view.getClientId());
+						viewbean.setDescp(view.getDescp());
+						viewbean.setHouseNo(view.getHouseNo());
+						viewbean.setPlotNo(view.getPlotNo());
+						viewbean.setStreetAddrs(view.getStreetAddrs());
+						viewbean.setCity(view.getCity());
+						viewbean.setState(view.getState());
+						viewbean.setPincode(view.getPincode());
+						viewbean.setStatus(view.getStatus());
+						beanList.add(viewbean);
+					}
 				}
+				if (!CollectionUtils.isEmpty(beanList)) {
+					warehouseViewList.setWarehouseViewBean(beanList);
+					warehouseViewList.setTotalRecord(pages.getTotalElements());
+				}
+			} else {
+				log.error("No Warehouses found", ErrorCodes.WL_001);
+				errorbean.setErrorCode(ErrorCodes.WL_001);
+				errorbean.setErrorMessage("No Warehouses found");
+				warehouseViewList.setErrorCode(errorbean);
+				return warehouseViewList;
 			}
-			if (!CollectionUtils.isEmpty(beanList)) {
-				warehouseViewList.setWarehouseViewBean(beanList);
-				warehouseViewList.setTotalRecord(pages.getTotalElements());
-			}
-		} else {
-			log.error("No Warehouses found", ErrorCodes.WL_001);
-			errorbean.setErrorCode(ErrorCodes.WL_001);
-			errorbean.setErrorMessage("No Warehouses found");
-			warehouseViewList.setErrorCode(errorbean);
-			return warehouseViewList;
 		}
+		
 
 		log.info("End method getAllWarehouses", this);
 		return warehouseViewList;
@@ -598,6 +605,17 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 		return bean;
 	}
 
-	private void setCity(String string1) {
+
+	@Override
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method uploadClientProfilePic", this);
+		if(StringUtils.isEmpty(gst)) {
+			return false;
+		}
+		Optional<Warehouse> warehouseOpt = warehouseRepository.findByGst(gst);
+		if(warehouseOpt.isPresent()) {
+			return false ;
+		}
+		return true;
 	}
 }

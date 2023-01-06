@@ -42,6 +42,8 @@ public class ClientUsers  implements Serializable{
 	private byte[] userPhoto;
 	@Column(name="phto_name")
 	private String photoName;
+	@Column(name="photo_type")
+	private String photoType;
 	
 	@Column(name = "address")
 	private String address;

@@ -20,7 +20,7 @@ public interface StoreFlexClientDao {
 
 	Object getStoreFlexClient(String clientId)throws StoreFlexServiceException;
 
-	ClientProfileListBean getStoreFlexClients(Pageable paging)throws StoreFlexServiceException;
+	ClientProfileListBean getStoreFlexClients(Pageable paging,String status, String cleintId, String gstNo)throws StoreFlexServiceException;
 
 	StoreFlexClientBean updateStoreFlexClient(StoreFlexClientBean clientBean) throws StoreFlexServiceException;
 
@@ -35,6 +35,10 @@ public interface StoreFlexClientDao {
 	Map<String, Boolean> deleteClientById(String clientId)throws StoreFlexServiceException;
 
 	List<Map> clientDropList()throws StoreFlexServiceException;
+
+	StoreFlexClientBean uploadClientProfilePic(String clientId)throws StoreFlexServiceException;
+
+	boolean gstcheckavailability(String gst)throws StoreFlexServiceException;
 
 	
 

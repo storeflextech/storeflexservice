@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexBean;
+import com.storeflex.beans.StoreFlexClientUsersBean;
 import com.storeflex.beans.StoreFlexUserBean;
 import com.storeflex.exceptions.StoreFlexServiceException;
 
@@ -25,10 +26,20 @@ public interface StoreFlexDao {
 
 	Object getRoles()throws StoreFlexServiceException;
 
-	Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
+	Object storeFlexUserFinalizeSL(StoreFlexUserBean req, String roleType,String clientCodes)throws StoreFlexServiceException;
+	
+	Object storeFlexUserFinalizeCL(StoreFlexUserBean req, String roleType,String clientCodes)throws StoreFlexServiceException;
+	
+	Object storeFlexUserFinalizeCU(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
 
 	Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
 
 	Object getStoreFlexUserId(String userid)throws StoreFlexServiceException;
+
+	Object clientUsers(String clientId,Pageable paging,String status)throws StoreFlexServiceException;
+
+	Object updateclientusers(StoreFlexClientUsersBean requestBean)throws StoreFlexServiceException;
+
+	Object clientUserById(String userId)throws StoreFlexServiceException;
 
 }

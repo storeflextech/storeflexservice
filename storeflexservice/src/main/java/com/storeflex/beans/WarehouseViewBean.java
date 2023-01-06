@@ -38,7 +38,7 @@ public class WarehouseViewBean implements Serializable{
 	@JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime createdTime;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-    private boolean status;
+    private String status;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
     private String houseNo;
 	@JsonInclude(JsonInclude.Include.NON_NULL)

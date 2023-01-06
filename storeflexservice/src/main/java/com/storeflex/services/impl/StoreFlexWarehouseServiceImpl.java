@@ -77,7 +77,7 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 
 	@Override
 	@Transactional
-	public Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file) throws StoreFlexServiceException, IOException {
+	public byte[] uploadWareHouseProfilePic(String warehouseId, MultipartFile file) throws StoreFlexServiceException, IOException {
 		log.info("Starting method uploadWareHouseProfilePic", this);
 		return dao.uploadWareHouseProfilePic(warehouseId,file);
 	}
@@ -91,9 +91,9 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 
 	@Override
 	@Transactional
-	public WarehouseViewBeanList getAllWarehouses(int page, int size) throws StoreFlexServiceException {
+	public WarehouseViewBeanList getAllWarehouses(int page, int size,String status) throws StoreFlexServiceException {
 		log.info("Starting method getAllWarehouses", this);
-		return dao.getAllWarehouses(page,size);
+		return dao.getAllWarehouses(page,size,status);
 	}
 
 	@Override
@@ -101,6 +101,13 @@ public class StoreFlexWarehouseServiceImpl implements StoreFlexWarehouseService 
 	public WarehouseCategoriesBean getWareshouseCategories() throws StoreFlexServiceException {
 		log.info("Starting method getWareshouseCategories", this);
 		return dao.getWareshouseCategories();
+	}
+
+	@Override
+	@Transactional
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method gstcheckavailability", this);
+		return dao.gstcheckavailability(gst);
 	}
 
 }

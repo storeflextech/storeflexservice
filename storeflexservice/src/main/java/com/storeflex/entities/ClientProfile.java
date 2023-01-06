@@ -43,6 +43,8 @@ public class ClientProfile  implements Serializable{
 	private byte[] photo;
 	@Column(name = "compny_photo_name")
 	private String photoName;
+	@Column(name="photo_type")
+	private String photoType;
 	@Column(name = "compny_url")
 	private String url;
 	@Column(name = "compny_gstno")
@@ -57,7 +59,7 @@ public class ClientProfile  implements Serializable{
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDateTime updatedate;
 	@Column(name = "status")
-	private boolean status;
+	private String status;
 
 	@OneToMany(mappedBy = "clientProfile", cascade = CascadeType.ALL)
 	private Set<ClientAddress> addresses = new HashSet<ClientAddress>();

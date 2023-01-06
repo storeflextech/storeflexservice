@@ -30,12 +30,14 @@ public interface StoreFlexWarehouseDao {
 
 	WarehouseViewBeanList getWarehouseSearch(WarehouseRequestBean build, int page, int size)throws StoreFlexServiceException;
 
-	Object uploadWareHouseProfilePic(String warehouseId, MultipartFile file)throws StoreFlexServiceException, IOException;
+	byte[] uploadWareHouseProfilePic(String warehouseId, MultipartFile file)throws StoreFlexServiceException, IOException;
 
 	Map<String, Boolean> deleteWarehouseById(String warehouseId)throws StoreFlexServiceException;
 
-	WarehouseViewBeanList getAllWarehouses(int page, int size)throws StoreFlexServiceException;
+	WarehouseViewBeanList getAllWarehouses(int page, int size,String status)throws StoreFlexServiceException;
 
 	WarehouseCategoriesBean getWareshouseCategories()throws StoreFlexServiceException;
+
+	boolean gstcheckavailability(String gst)throws StoreFlexServiceException;
 
 }

@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -26,21 +28,22 @@ public class WarehousePrice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID priceId;
 	@Column(name = "warehouse_id", nullable = false)
 	private String warehouseId;
-	@Column(name = "availspace", nullable = false)
+	@Column(name = "availspace", nullable = true)
 	private String availspace;
-	@Column(name = "ratesqtft", nullable = false)
+	@Column(name = "ratesqtft", nullable = true)
 	private String ratesqtft;
-	@Column(name = "minordersqt", nullable = false)
+	@Column(name = "minordersqt", nullable = true)
 	private String minordersqt;
-	@Column(name = "created_by", nullable = false)
+	@Column(name = "created_by", nullable = true)
 	private String createBy;
-	@Column(name = "created_date", nullable = false)
+	@Column(name = "created_date", nullable = true)
 	private LocalDateTime createDate;
-	@Column(name = "update_by", nullable = false)
+	@Column(name = "update_by", nullable = true)
 	private String updatedBy;
-	@Column(name = "update_date", nullable = false)
+	@Column(name = "update_date", nullable = true)
 	private LocalDateTime updateDate;
 }

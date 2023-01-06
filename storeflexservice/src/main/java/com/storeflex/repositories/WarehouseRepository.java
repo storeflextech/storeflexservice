@@ -1,5 +1,7 @@
 package com.storeflex.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +17,9 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, String>{
 	Page<Warehouse> getWarehouseListByClient(String clientId, Pageable paging);
 	
 	Page<Warehouse> findByClientId(String clientId, Pageable paging);
+	
+	@Query("from Warehouse where warehouseTaxId =:gst")
+	Optional<Warehouse> findByGst(String gst);
 
 
 }

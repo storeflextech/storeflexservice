@@ -49,7 +49,7 @@ public class Warehouse  implements Serializable{
 	@Column(name = "update_date")
 	private LocalDateTime updateDate;
 	@Column(name = "status")
-	private boolean status;
+	private String status;
 	@Column(name = "warehouse_facility_ids")
 	private String facilitiesId;
 	@Column(name = "warehouse_industry_ids")

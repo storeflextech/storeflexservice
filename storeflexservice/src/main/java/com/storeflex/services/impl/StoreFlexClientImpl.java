@@ -46,9 +46,9 @@ public class StoreFlexClientImpl implements StoreFlexClientService {
 
 	@Override
 	@Transactional
-	public ClientProfileListBean getStoreFlexClients(Pageable paging) throws StoreFlexServiceException {
+	public ClientProfileListBean getStoreFlexClients(Pageable paging,String status,String cleintId,String gstNo) throws StoreFlexServiceException {
 		log.info("Starting method getStoreFlexClients", this);
-		return dao.getStoreFlexClients(paging);
+		return dao.getStoreFlexClients(paging,status,cleintId,gstNo);
 	}
 
 	/*
@@ -102,6 +102,20 @@ public class StoreFlexClientImpl implements StoreFlexClientService {
 	public List<Map> clientDropList() throws StoreFlexServiceException {
 		log.info("Starting method clientDropList", this);
 		return dao.clientDropList();
+	}
+
+	@Override
+	@Transactional
+	public StoreFlexClientBean uploadClientProfilePic(String clientId) throws StoreFlexServiceException {
+		log.info("Starting method uploadClientProfilePic", this);
+		return dao.uploadClientProfilePic(clientId);
+	}
+
+	@Override
+	@Transactional
+	public boolean gstcheckavailability(String gst) throws StoreFlexServiceException {
+		log.info("Starting method gstcheckavailability", this);
+		return dao.gstcheckavailability(gst);
 	}
 
 }

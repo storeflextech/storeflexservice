@@ -23,6 +23,7 @@ import com.storeflex.response.StoreFlexResponse.Status;
 import io.swagger.annotations.ApiOperation;
 
 import com.storeflex.beans.StoreFlexBean;
+import com.storeflex.beans.StoreFlexClientUsersBean;
 import com.storeflex.beans.StoreFlexUserBean;
 import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.services.StoreFlexService;
@@ -160,7 +161,8 @@ public class StoreFlexController {
 		 log.info("End method getStoreFlexUserId", this);
 		return response;
 	 }
-	 
+	
+	 /*
 	 @PostMapping(value="/storeflexuser" ,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflexuser" , notes ="Create Store flex users" , nickname="storeflexuser")
 	 public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType){
@@ -195,7 +197,7 @@ public class StoreFlexController {
 			}
 			 return response;
 		
-	 }
+	 }*/
 	 
 	 @PutMapping(value="/uploaduserpic" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	 @ApiOperation(value="storeflexuser" , notes ="Upload Store flex users profile pic" , nickname="storeflexuser")
@@ -296,5 +298,86 @@ public class StoreFlexController {
 		 return response;
 		 }
 	 
+	
+	 @GetMapping(value="/clientusers" ,produces = MediaType.APPLICATION_JSON_VALUE)
+	 @ApiOperation(value="clientusers" , notes ="Get client users" , nickname="clientusers")
+	 public StoreFlexResponse<Object> clientUsers(@RequestParam String clientId,@RequestParam String status,
+			 @RequestParam(defaultValue = "0") int page,
+			 @RequestParam(defaultValue = "3") int size)throws StoreFlexServiceException{
+		 log.info("Starting method clientUsers", this);
+		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		 try {
+			 Pageable paging = PageRequest.of(page, size);
+			 Object object= service.clientUsers(clientId,paging,status);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		 }
+		 catch (StoreFlexServiceException e) {
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		 return response;
+	 }
 	 
+	 @PostMapping(value="/clientuser" ,produces = MediaType.APPLICATION_JSON_VALUE)
+	 @ApiOperation(value="clientuser" , notes ="Update client user" , nickname="clientuser")
+	 public StoreFlexResponse<Object> clientusers(@Validated @RequestBody StoreFlexClientUsersBean requestBean)throws StoreFlexServiceException{
+		 log.info("Starting method clientusers", this);
+		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		 try {
+			Object object= service.updateclientusers(requestBean);
+			 if(null!=object) {
+				 object=service.clientUserById(requestBean.getUserId().toString());
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMethodReturnValue(object);
+				 response.setMessage("Record updated");
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		 }
+		 catch (StoreFlexServiceException e) {
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		 log.info("End method clientuser", this);
+		 return response;
+	 }
+	 
+	 @GetMapping(value="/clientuser" ,produces = MediaType.APPLICATION_JSON_VALUE)
+	 @ApiOperation(value="clientuser" , notes ="Get Client by USER ID" , nickname="clientuser")
+	 public StoreFlexResponse<Object> clientUserById(@RequestParam String userId)throws StoreFlexServiceException{
+		 log.info("Starting method clientuser", this);
+		 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		 try {
+			Object object= service.clientUserById(userId);
+			 if(null!=object) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMethodReturnValue(object);
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("System Error....");
+			 }
+		 }
+		 catch (StoreFlexServiceException e) {
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		 log.info("End method clientuser", this);
+		 return response;
+	 }
 }

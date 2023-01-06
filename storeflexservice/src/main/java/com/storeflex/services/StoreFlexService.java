@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storeflex.beans.StoreFlexBean;
+import com.storeflex.beans.StoreFlexClientUsersBean;
 import com.storeflex.beans.StoreFlexUserBean;
 import com.storeflex.exceptions.StoreFlexServiceException;
 
@@ -24,9 +25,17 @@ public Object getState(String countyId)throws StoreFlexServiceException;
 
 public Object getRoles()throws StoreFlexServiceException;
 
-public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType)throws StoreFlexServiceException;
+public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType,String clientCodes)throws StoreFlexServiceException;
 
 public Object getStoreFlexUsersDetails(Pageable paging)throws StoreFlexServiceException;
 
 public Object getStoreFlexUserId(String userid)throws StoreFlexServiceException;
+
+public Object clientUsers(String clientId,Pageable paging,String status)throws StoreFlexServiceException;
+
+public Object updateclientusers(StoreFlexClientUsersBean requestBean)throws StoreFlexServiceException;
+
+public Object clientUserById(String userId)throws StoreFlexServiceException;
+
+
 }

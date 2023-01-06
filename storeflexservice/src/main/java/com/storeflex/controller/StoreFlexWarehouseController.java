@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -76,28 +78,14 @@ public class StoreFlexWarehouseController {
 	
 	@PostMapping(value="/uploadWareHouseProfilePic" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="uploadWareHouseProfilePic" , notes ="upload storeflex WareHouse profile pic , input wareHouseId , profile name and pciture" , nickname="uploadWareHouseProfilePic")
-	public StoreFlexResponse<Object>uploadWareHouseProfilePic(@RequestParam("warehouseId") String warehouseId,@RequestParam("wareHousePhoto") MultipartFile file) throws IOException{
+	public ResponseEntity<?> uploadWareHouseProfilePic(@RequestParam("warehouseId") String warehouseId,@RequestParam("wareHousePhoto") MultipartFile file) throws IOException, StoreFlexServiceException{
 		log.info("Starting method uploadClientProfilePic", this);
-		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
-		Object object;
-		try {
-			object = service.uploadWareHouseProfilePic(warehouseId,file);
-			 if(null!=object) {
-				 response.setStatus(Status.SUCCESS);
-				 response.setStatusCode(Status.SUCCESS.getCode());
-				 response.setMessage("Profile picture upload successfully");
-			 }else {
-				 response.setStatus(Status.BUSENESS_ERROR);
-				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-				 response.setMessage("System Error....");
-			 }
-		}
-		catch(StoreFlexServiceException e){
-			 response.setStatus(Status.BUSENESS_ERROR);
-			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
-			 response.setMessage("System Error...."+e.getMessage());
-		}
-		return response;
+		byte[] object;
+		object = service.uploadWareHouseProfilePic(warehouseId,file);
+		return ResponseEntity.status(HttpStatus.OK)
+					.contentType(MediaType.valueOf(file.getContentType()))
+					.body(object);
+			
 	}
 
 	@PostMapping(value = "/uploadwarehousepics", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -256,11 +244,12 @@ public class StoreFlexWarehouseController {
 	@ApiOperation(value = "warehouses", notes = "get all warehouses", nickname = "warehouses")
 	public StoreFlexResponse<WarehouseViewBeanList> getAllWarehouses(
 			@RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "3") int size){
+	        @RequestParam(defaultValue = "3") int size,
+	        @RequestParam(value = "status") String status){
 		log.info("Starting method wareHouse", this);
 		StoreFlexResponse<WarehouseViewBeanList> response = new StoreFlexResponse<WarehouseViewBeanList>();
 		try {
-			WarehouseViewBeanList warehouseViewBeanList = service.getAllWarehouses(page,size);
+			WarehouseViewBeanList warehouseViewBeanList = service.getAllWarehouses(page,size,status);
 			if (null != warehouseViewBeanList && null!=warehouseViewBeanList.getWarehouseViewBean() && warehouseViewBeanList.getWarehouseViewBean().size()>0) {
 				response.setStatus(Status.SUCCESS);
 				response.setStatusCode(Status.SUCCESS.getCode());
@@ -350,5 +339,30 @@ public class StoreFlexWarehouseController {
 		return response;
 	}
 	
+	@GetMapping(value="/gstwarehouseavailability" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value="warehouse" , notes ="find gst avalibility" , nickname="warehouse")
+    public StoreFlexResponse<Object> gstcheckavailability(@RequestParam String gst){
+		log.info("Start method gstcheckavailability", this);
+		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
+		try {
+			boolean flag  = service.gstcheckavailability(gst);
+			 if(flag) {
+				 response.setStatus(Status.SUCCESS);
+				 response.setStatusCode(Status.SUCCESS.getCode());
+				 response.setMessage("GST "+gst+" available");
+			 }else {
+				 response.setStatus(Status.BUSENESS_ERROR);
+				 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+				 response.setMessage("GST "+gst+" not available");
+			 }
+		}
+		catch(StoreFlexServiceException e){
+			 response.setStatus(Status.BUSENESS_ERROR);
+			 response.setStatusCode(Status.BUSENESS_ERROR.getCode()); 
+			 response.setMessage("System Error...."+e.getMessage());
+		}
+		log.info("End method gstcheckavailability", this);
+		return response;
+    } 
 	
 }
