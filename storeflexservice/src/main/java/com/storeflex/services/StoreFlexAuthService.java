@@ -6,5 +6,6 @@ import com.storeflex.exceptions.StoreFlexServiceException;
 public interface StoreFlexAuthService {
 
 	Object sllogin(TestAuthBean bean) throws StoreFlexServiceException;
+	Object login(TestAuthBean bean) throws StoreFlexServiceException;
 
 }

@@ -256,8 +256,8 @@ public class StoreFlexWarehouseController {
 				response.setMethodReturnValue(warehouseViewBeanList);
 			}else
 			if(!StringUtils.isEmpty(warehouseViewBeanList.getErrorCode().getErrorCode())) {
-				response.setStatus(Status.SUCCESS);
-				response.setStatusCode(Status.SUCCESS.getCode());
+				response.setStatus(Status.BUSENESS_ERROR);
+				response.setStatusCode(Status.BUSENESS_ERROR.getCode());
 				response.setMethodReturnValue(warehouseViewBeanList);	
 			}
 			else {

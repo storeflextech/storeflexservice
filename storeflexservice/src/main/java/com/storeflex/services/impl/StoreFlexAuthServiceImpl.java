@@ -31,4 +31,12 @@ public class StoreFlexAuthServiceImpl implements StoreFlexAuthService{
 		 return storeFlexAuthDao.sllogin(bean);
 	}
 
+
+	@Override
+	@Transactional
+	public Object login(TestAuthBean bean) throws StoreFlexServiceException {
+		 log.info("Starting method login", this);
+		 return storeFlexAuthDao.login(bean);
+	}
+
 }

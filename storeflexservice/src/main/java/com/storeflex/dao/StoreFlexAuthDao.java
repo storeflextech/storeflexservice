@@ -7,4 +7,6 @@ public interface StoreFlexAuthDao {
 
 	Object sllogin(TestAuthBean bean) throws StoreFlexServiceException;
 
+	Object login(TestAuthBean bean)throws StoreFlexServiceException;
+
 }
