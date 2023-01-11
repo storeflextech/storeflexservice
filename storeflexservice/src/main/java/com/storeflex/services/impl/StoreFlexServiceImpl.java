@@ -48,7 +48,7 @@ public class StoreFlexServiceImpl implements StoreFlexService{
 	@Transactional
 	public Object storeFlexUserFinalize(StoreFlexUserBean req, String roleType,String clientCodes) throws StoreFlexServiceException {
 		log.info("Starting method storeFlexUserFinalize", this);
-		if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.SL_USER)) {
+		if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.SL_USER) && clientCodes.equalsIgnoreCase("SF-101")) {
 			return storeFlexDao.storeFlexUserFinalizeSL(req,roleType,clientCodes);
 		}
 		if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.CL_USER)) {
