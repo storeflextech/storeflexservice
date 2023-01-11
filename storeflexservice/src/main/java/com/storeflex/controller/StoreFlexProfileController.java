@@ -36,7 +36,7 @@ StoreFlexClientHelper helper;
 
 @PostMapping(value="/storeflexuser" ,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 @ApiOperation(value="storeflexuser" , notes ="Create Store flex users" , nickname="storeflexuser")
-public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType,String clientCodes) throws MessagingException, IOException{
+public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlexUserBean req,@RequestParam String roleType,@RequestParam(required = false) String clientCodes) throws MessagingException, IOException{
 	 StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
 	 Object object;
 	 try {
@@ -45,7 +45,7 @@ public StoreFlexResponse<Object> storeFlexUser(@Validated @RequestBody StoreFlex
 				if(null!=object) {
 					object = service.storeFlexUserFinalize(req,roleType,clientCodes);
 					if(null!=object) {
-						 helper.onboardUser(req);
+						// helper.onboardUser(req);
 						 response.setStatus(Status.SUCCESS);
 						 response.setStatusCode(Status.SUCCESS.getCode());
 						 response.setMethodReturnValue(object);

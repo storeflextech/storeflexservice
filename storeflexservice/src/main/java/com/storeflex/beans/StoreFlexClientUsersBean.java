@@ -68,7 +68,7 @@ public class StoreFlexClientUsersBean implements Serializable{
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDateTime updateDate;
-	
+	private boolean intent = false;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String redirectUrl;
 	@JsonInclude(JsonInclude.Include.NON_NULL)

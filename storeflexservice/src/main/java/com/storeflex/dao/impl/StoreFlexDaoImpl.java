@@ -33,6 +33,7 @@ import com.storeflex.dao.StoreFlexDao;
 import com.storeflex.entities.City;
 import com.storeflex.entities.ClientProfile;
 import com.storeflex.entities.ClientUsers;
+import com.storeflex.entities.GuestUsers;
 import com.storeflex.entities.Role;
 import com.storeflex.entities.State;
 import com.storeflex.entities.StoreFlex;
@@ -46,6 +47,7 @@ import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.helpers.StoreFlexHelper;
 import com.storeflex.repositories.CityRepository;
 import com.storeflex.repositories.ClientUsersRepository;
+import com.storeflex.repositories.GuestUsersRepository;
 import com.storeflex.repositories.RoleRepository;
 import com.storeflex.repositories.StateRepository;
 import com.storeflex.repositories.StoreFlexClientRepository;
@@ -87,6 +89,9 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 	
 	@Autowired
 	ClientUsersRepository clientUsersRepository;
+	
+	@Autowired
+	GuestUsersRepository guestUsersRepository;
 	
 
 		
@@ -184,6 +189,7 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 			if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.CL_USER)) {
 				userReg.setUserType(StoreFlexConstants.CL_USER);
 			}
+			//roleType will be GUEST only
 			if(req.getLoginType().equalsIgnoreCase(StoreFlexConstants.CU_USER)) {
 				userReg.setUserType(StoreFlexConstants.CU_USER);
 			}
@@ -254,9 +260,36 @@ public class StoreFlexDaoImpl implements StoreFlexDao{
 	}
 	
 	@Override
-	public Object storeFlexUserFinalizeCU(StoreFlexUserBean req, String roleType) throws StoreFlexServiceException {
-		// TODO Auto-generated method stub
-		return null;
+	public Object storeFlexUserFinalizeCU(StoreFlexUserBean req, String roleType) {
+		log.info("Start method storeFlexUserFinalizeCU", this);
+		GuestUsers users = new GuestUsers();
+		ErrorCodeBean error = new ErrorCodeBean();
+		if (null != req) {
+        	UsersReg usersReg = userAuthRepository.searchEmailExist(req.getEmail());
+			users.setCreateBy("ADMIN");
+		    users.setCreateDate(LocalDateTime.now());
+			users.setFirstName(req.getFirstName());
+			users.setMiddleName(req.getMiddleName());
+			users.setLastName(req.getLastName());
+			users.setMobileNo(req.getMobileNo());// need to update
+			users.setEmail(req.getEmail());// need to update
+			users.setRoleType(roleType);
+			users.setHouseNo(req.getHouseNo());
+			users.setAddress(req.getAddress());
+			users.setCity(req.getCity());
+			users.setState(req.getState());
+			users.setCountry(req.getCountry());
+			users.setPincode(req.getPincode());
+			users.setStatus(StoreFlexConstants.ACTIVE_STATUS);// need to update
+			users.setUserReg(usersReg);
+			users = guestUsersRepository.saveAndFlush(users);
+			users.setUserId(users.getUserId());
+		}else {
+			error.setErrorCode(ErrorCodes.USER_NOT_REGISTER);
+			error.setErrorMessage("Guest user issue on registration "+ErrorCodes.USER_NOT_REGISTER);
+			return error;
+		}
+		return users;
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.storeflex.beans.LoginBean;
@@ -113,13 +114,18 @@ public class StoreflexAuthController {
 	
 	
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "login", notes = "Storeflex Customer login  , passed email id and password", nickname = "login")
-	public StoreFlexResponse<Object> login(@Validated @RequestBody TestAuthBean bean){
+	@ApiOperation(value = "login", notes = "Storeflex Customer login  , passed email id and password , userType will be SL, CL , CU", nickname = "login")
+	public StoreFlexResponse<Object> login(@RequestParam String userType,@Validated @RequestBody TestAuthBean bean){
 		log.info("Starting method testLogin", this);	
 		StoreFlexResponse<Object> response = new StoreFlexResponse<Object>();
 		Object object=null;
 		try {
-			object=service.sllogin(bean);
+			if(userType.equalsIgnoreCase("SL")) {
+				object=service.sllogin(bean);	
+			}else {
+			 //CL or CU
+			 object=service.login(bean);
+			}
 			 if(null!=object) {
 				 response.setStatus(Status.SUCCESS);
 				 response.setStatusCode(Status.SUCCESS.getCode());

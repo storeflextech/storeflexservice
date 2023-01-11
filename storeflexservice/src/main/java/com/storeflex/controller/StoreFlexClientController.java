@@ -34,6 +34,7 @@ import com.storeflex.exceptions.StoreFlexServiceException;
 import com.storeflex.response.StoreFlexResponse;
 import com.storeflex.response.StoreFlexResponse.Status;
 import com.storeflex.services.StoreFlexClientService;
+import com.storeflex.services.StoreFlexService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -44,6 +45,8 @@ public class StoreFlexClientController {
 
 	@Autowired
 	StoreFlexClientService service;
+	@Autowired
+	StoreFlexService storeFlexService;
 	
 	@PostMapping(value="/client" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value="client" , notes ="create storeflex client" , nickname="client")

@@ -1,6 +1,5 @@
 package com.storeflex.repositories;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +13,8 @@ public interface UserAuthRepository extends JpaRepository<UsersReg, UUID>{
    
 	@Query("from UsersReg where email=:email")
 	UsersReg searchEmailExist(String email);
+	
+	@Query("from UsersReg where email=:email and pswd=:pswd")
+	UsersReg validateUser(String email,String pswd);
 
 }

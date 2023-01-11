@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,13 +18,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Getter
 @Setter
 @Entity
-@Table(name = "client_users")
-public class ClientUsers  implements Serializable{
+@Table(name = "guest_users")
+public class GuestUsers  implements Serializable{
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@Column(name = "user_id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,14 +35,7 @@ public class ClientUsers  implements Serializable{
 	@Column(name = "middle_name")
 	private String middleName;
 	@Column(name = "last_name")
-	private String lastName;
-	@Column(name="user_phto")
-	private byte[] userPhoto;
-	@Column(name="phto_name")
-	private String photoName;
-	@Column(name="photo_type")
-	private String photoType;
-	
+	private String lastName;	
 	@Column(name = "address")
 	private String address;
 	@Column(name = "house_no")
@@ -80,9 +73,4 @@ public class ClientUsers  implements Serializable{
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reg_id")
 	private UsersReg userReg;
-	
-	@ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name="client_id")
-    @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
-    private ClientProfile clientProfile;
 }

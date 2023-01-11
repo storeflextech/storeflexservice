@@ -262,6 +262,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 			ClientWareHousesBean warehousebean = new ClientWareHousesBean();
 			ClientWareHouseAddrBean warehouseAddreBean = new ClientWareHouseAddrBean();
 			warehousebean.setClientId(warehouse.getClientId());
+			warehousebean.setWarehouseName(warehouse.getWarehouseName());
 			warehousebean.setWarehouseId(warehouse.getWarehouseId());
 			warehousebean.setCreateBy(warehouse.getCreateBy());
 			warehousebean.setCreateDate(warehouse.getCreateDate());
@@ -283,6 +284,7 @@ public class StoreFlexWarehouseDaoImpl implements StoreFlexWarehouseDao {
 				warehouseAddreBean.setAddressType(address.getAddressType());
 				warehouseAddreBean.setHouseNo(address.getHouseNo());
 				warehouseAddreBean.setPlotNo(address.getPlotNo());
+				warehouseAddreBean.setStreetDetails(address.getStreetDetails());
 				warehouseAddreBean.setCity(address.getCityId());
 				warehouseAddreBean.setState(address.getState());
 				warehouseAddreBean.setCountry(address.getCountryId());
